@@ -1,0 +1,26 @@
+* akirak-mode
+This will be my collection of keybindings and other settings for Emacs,
+which are migrated from my previous configuration.
+
+I had a lot of opinionated settings in my configuration, part of which are unfortunately broken now.
+I am currently using Doom Emacs for some of my coding tasks, and I admit Doom is excellent, but I miss my config, especially for keybindings.
+I also plan on rewriting my configuration from scratch, which is primarily for Org mode.
+I will have to use two or three Emacs configurations simultaneously, which would be a nightmare.
+
+To achieve peace of mind and happiness, I have decided to create a compatibility layer to provide a common set of commands, keybindings, and settings, and this is the repository.
+It provides =akirak-mode=, which is a minor mode which activates my personalized settings.
+
+It is not intended for use by other people, but I care about quality.
+** Installation
+Install it as an Emacs package.
+
+It is not going to be available on MELPA, because I am unwilling to do so.
+Use =straight.el=, =Quelpa=, or any other package manager you use to install the package.
+** Configuration
+=akirak-mode= is a global mode, and =akirak-minor-mode= is a minor mode. The following is an example configuration using =use-package=:
+
+#+begin_src emacs-lisp
+  (use-package akirak
+    :config
+    (akirak-mode 1))
+#+end_src
