@@ -36,13 +36,12 @@
   :group 'local)
 
 (defun akirak--init-bindings ()
-  "Return an initial value of `akirak-minor-mode-map'."
+  "Return an initial value of `akirak-minor-mode-map' variable."
   (let ((m (make-sparse-keymap)))
     m))
 
 (defvar akirak-minor-mode-map
-  (akirak--init-bindings)
-  "Keymap activated in `akirak-mode' and `akirak-minor-mode'.")
+  (akirak--init-bindings))
 
 ;;;###autoload
 (define-minor-mode akirak-minor-mode
@@ -59,13 +58,13 @@
 
 ;;;###autoload
 (defun akirak-minor-mode-on ()
-  "Turn on `akirak-minor-mode'."
+  "Turn on the minor mode in this buffer."
   (interactive)
   (akirak-minor-mode 1))
 
 ;;;###autoload
 (defun akirak-minor-mode-off ()
-  "Turn off `akirak-minor-mode'."
+  "Turn off the minor mode in this buffer."
   (interactive)
   (akirak-minor-mode -1))
 
