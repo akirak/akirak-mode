@@ -10,7 +10,7 @@ I will have to use two or three Emacs configurations simultaneously, which would
 To achieve peace of mind and happiness, I have decided to create a compatibility layer to provide a common set of commands, keybindings, and settings, and this is the repository.
 It provides =akirak-mode=, which is a minor mode which activates my personalized settings.
 
-It is not intended for use by other people, but I care about quality.
+It is not intended for use by other people, but I want to care about quality.
 ** Installation
 Install it as an Emacs package.
 
