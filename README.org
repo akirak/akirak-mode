@@ -1,4 +1,10 @@
 * akirak-mode
+#+BEGIN_HTML
+<a href="https://github.com/akirak/akirak-mode/actions?query=workflow%3ACI+branch%3Amaster">
+<img src="https://github.com/akirak/akirak-mode/workflows/CI/badge.svg" alt="CI status">
+</a>
+#+END_HTML
+
 This will be my collection of keybindings and other settings for Emacs,
 which are migrated from my previous configuration.
 
