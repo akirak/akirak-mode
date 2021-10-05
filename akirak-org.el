@@ -35,6 +35,7 @@
 
 (defun akirak-org-sort-with-property ()
   "Sort entries in the buffer based on the sort property."
+  (interactive)
   (org-with-wide-buffer
    (goto-char (point-min))
    (while (re-search-forward org-heading-regexp nil t)
