@@ -1,0 +1,2 @@
+(akirak-elec-pair :fetcher github :repo "akirak/trivial-elisps"
+            :files ("akirak-elec-pair.el"))
