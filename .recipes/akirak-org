@@ -1,2 +1,0 @@
-(akirak-org :fetcher github :repo "akirak/trivial-elisps"
-            :files ("akirak-org.el"))
