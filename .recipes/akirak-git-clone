@@ -1,0 +1,2 @@
+(akirak-git-clone :fetcher github :repo "akirak/trivial-elisps"
+                  :files ("akirak-git-clone.el"))

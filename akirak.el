@@ -32,6 +32,7 @@
 ;;; Code:
 
 (require 'akirak-elec-pair)
+(require 'akirak-git-clone)
 
 (provide 'akirak)
 ;;; akirak.el ends here
