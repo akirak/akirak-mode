@@ -90,8 +90,29 @@
        (make-akirak-git-clone-source :type 'github
                                      :origin origin
                                      :local-path local-path)))
+    ;; Quick-and-dirty pattern for Git URLs.
+    ;; Maybe import more comprehensive regexp from git-identity.el
+    ((rx bol (or "https" "git" "ssh") "://"
+         (?  (+ (any "-_." alnum)) "@")
+         (group (+ (any "-_" alnum)) (+ "." (+ (any "-_" alnum))))
+         (?  ":" (+ (char digit)))
+         "/"
+         (group (+? anything))
+         ".git"
+         (?  "/")
+         eol)
+     (let* ((host (match-string 1 flake-ref))
+            (match (match-string 2 flake-ref))
+            (path (if-let (pos (string-match (rx ".git" eol) match))
+                      (substring match 0 pos)
+                    match))
+            (local-path (f-join host path))
+            (origin flake-ref))
+       (make-akirak-git-clone-source :type 'git
+                                     :origin origin
+                                     :local-path local-path)))
     (_
-     (error "Unsupported ref: %s" flake-ref))))
+     (error "Unsupported ref: %s" flake-ref)))))
 
 (defun akirak-git-clone--clone (origin dest)
   "Clone a Git repository from ORIGIN to DEST."
