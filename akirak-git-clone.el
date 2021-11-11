@@ -54,11 +54,6 @@
   "Type for representing a repository."
   type origin local-path rev-or-ref params)
 
-(defun akirak-git-clone--github-local-path (path)
-  "Return a local path for PATH on github."
-  (check-type path string)
-  (f-join "github.com" path))
-
 (defun akirak-git-clone--parse (flake-ref)
   "Parse FLAKE-REF."
   (pcase flake-ref
@@ -68,8 +63,7 @@
          (?  "/" (group (+ (not (any "?")))))
 
          (?  "?" (group (+ anything))))
-     (let ((local-path (akirak-git-clone--github-local-path
-                        (match-string 1 flake-ref)))
+     (let ((local-path (f-join "github.com" (match-string 1 flake-ref)))
            (rev-or-ref (match-string 2 flake-ref))
            (params (match-string 3 flake-ref))
            (origin (format "https://github.com/%s.git"
@@ -79,16 +73,20 @@
                                      :local-path local-path
                                      :rev-or-ref rev-or-ref
                                      :params params)))
-    ((rx bol "https://github.com/"
+    ((rx bol "https://"
+         (group (or "github.com"
+                    "gitlab.com"))
+         "/"
          (group (+ (not (any "/")))
                 "/"
                 (+ (not (any "/")))))
-     (let* ((match (match-string 1 flake-ref))
+     (let* ((host (match-string 1 flake-ref))
+            (match (match-string 2 flake-ref))
             (path (if-let (pos (string-match (rx ".git" eol) match))
                       (substring match 0 pos)
                     match))
-            (local-path (akirak-git-clone--github-local-path path))
-            (origin (format "https://github.com/%s.git" path)))
+            (local-path (f-join host path))
+            (origin (format "https://%s/%s.git" host path)))
        (make-akirak-git-clone-source :type 'github
                                      :origin origin
                                      :local-path local-path)))
