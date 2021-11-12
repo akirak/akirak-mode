@@ -1,0 +1,2 @@
+(akirak-org-journal :fetcher github :repo "akirak/trivial-elisps"
+                    :files ("akirak-org-journal.el"))
