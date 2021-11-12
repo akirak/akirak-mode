@@ -84,5 +84,24 @@ For HEADING and TAGS, see `akirak-org-journal-ensure-group'."
   `(lambda () (akirak-org-journal-ensure-group ,heading
                 :tags ,tags)))
 
+;;;###autoload
+(defun akirak-org-journal-overview (&optional arg)
+  "Go to the current date in the journal and display an overview.
+
+If ARG is non-nil, it also updates a dynamic block immediately
+after the heading, if any."
+  (interactive "P")
+  (org-journal-new-entry t)
+  (re-search-backward (rx bol "* "))
+  (org-content 3)
+  (org-show-set-visibility 'local)
+  ;; I have a dynamic block for time tracking in each journal.
+  ;; I want to update its contents when I review the journal.
+  (when arg
+    (save-excursion
+      (forward-line)
+      (when (looking-at org-dblock-start-re)
+        (org-dblock-update)))))
+
 (provide 'akirak-org-journal)
 ;;; akirak-org-journal.el ends here
