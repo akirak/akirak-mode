@@ -35,6 +35,7 @@
 
 (require 'cl-lib)
 (require 'f)
+(require 'rx)
 
 (defgroup akirak-git-clone
   nil
@@ -82,8 +83,8 @@
                 (+ (not (any "/")))))
      (let* ((host (match-string 1 flake-ref))
             (match (match-string 2 flake-ref))
-            (path (if-let (pos (string-match (rx ".git" eol) match))
-                      (substring match 0 pos)
+            (path (if (string-match-p (rx ".git" eol) match)
+                      (substring match 0 -4)
                     match))
             (local-path (f-join host path))
             (origin (format "https://%s/%s.git" host path)))
@@ -103,8 +104,8 @@
          eol)
      (let* ((host (match-string 1 flake-ref))
             (match (match-string 2 flake-ref))
-            (path (if-let (pos (string-match (rx ".git" eol) match))
-                      (substring match 0 pos)
+            (path (if (string-match-p (rx ".git" eol) match)
+                      (substring match 0 -4)
                     match))
             (local-path (f-join host path))
             (origin flake-ref))
@@ -112,7 +113,7 @@
                                      :origin origin
                                      :local-path local-path)))
     (_
-     (error "Unsupported ref: %s" flake-ref)))))
+     (error "Unsupported ref: %s" flake-ref))))
 
 (defun akirak-git-clone--clone (origin dest)
   "Clone a Git repository from ORIGIN to DEST."
@@ -142,9 +143,9 @@
   (let* ((obj (akirak-git-clone--parse flake-ref))
          (origin (akirak-git-clone-source-origin obj))
          (repo (expand-file-name (akirak-git-clone-source-local-path obj)
-                                 akirak-git-clone-root))
-         (worktree (when (akirak-git-clone-source-rev-or-ref obj)
-                     (error "Rev or ref is unsupported now"))))
+                                 akirak-git-clone-root)))
+    (when (akirak-git-clone-source-rev-or-ref obj)
+      (error "Rev or ref is unsupported now"))
     (if (file-directory-p repo)
         (akirak-git-clone-browse repo)
       (akirak-git-clone--clone origin repo))))
