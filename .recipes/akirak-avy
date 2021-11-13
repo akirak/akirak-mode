@@ -1,0 +1,2 @@
+(akirak-avy :fetcher github :repo "akirak/trivial-elisps"
+            :files ("akirak-avy.el"))
