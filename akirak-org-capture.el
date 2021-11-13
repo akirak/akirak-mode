@@ -1,5 +1,9 @@
 ;;; akirak-org-capture.el --- Basic definitions for org-capture -*- lexical-binding: t -*-
 
+(require 'org)
+(require 'ol)
+(require 'akirak-readable)
+
 (defcustom akirak-org-capture-default-drawer
   ":PROPERTIES:
 :CREATED_TIME: %U
