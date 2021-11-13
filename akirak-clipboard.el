@@ -43,10 +43,13 @@
 
 (defun akirak-clipboard-urls ()
   "Return a list of urls from the clipboard and the kill ring."
-  (thread-last (akirak-clipboard-strings)
-    (mapcar #'akirak-url-match-html-string)
-    (delq nil)
-    (cl-remove-duplicates)))
+  (cl-macrolet
+      ((remove-dups (items)
+                    `(cl-remove-duplicates ,items :test #'string-equal)))
+    (thread-last (akirak-clipboard-strings)
+      (mapcar #'akirak-url-match-html-string)
+      (delq nil)
+      (remove-dups))))
 
 (provide 'akirak-clipboard)
 ;;; akirak-clipboard.el ends here
