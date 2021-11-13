@@ -37,6 +37,7 @@
 (declare-function org-web-tools--html-title "ext:org-web-tools")
 
 (defun akirak-readable-url-title (url)
+  (require 'org-web-tools)
   (when-let (html (with-timeout (5)
                     (message "Fetching %s..." url)
                     (org-web-tools--get-url url)))
