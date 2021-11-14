@@ -37,8 +37,9 @@
 
 (defgroup akirak-git-clone
   nil
-  "Clone Git repositories."
-  :group 'github)
+  "Clone Git repositories efficiently."
+  :group 'git
+  :group 'akirak)
 
 (defcustom akirak-git-clone-root "~/archives/personal/git/"
   "Root of the repositories."
