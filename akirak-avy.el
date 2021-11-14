@@ -4,8 +4,6 @@
 
 ;; Author: Akira Komamura <akira.komamura@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.1") (avy "0.5") (akirak-url "0.1"))
-;; Keywords: convenience
 ;; URL: https://github.com/akirak/trivial-elisps
 
 ;; This file is not part of GNU Emacs.
@@ -24,6 +22,8 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Code:
 
 ;;; Commentary:
 

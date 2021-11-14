@@ -4,8 +4,6 @@
 
 ;; Author: Akira Komamura <akira.komamura@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.1") (org "9.4") (org-journal "2.1"))
-;; Keywords: outlines
 ;; URL: https://github.com/akirak/trivial-elisps
 
 ;; This file is not part of GNU Emacs.

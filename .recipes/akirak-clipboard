@@ -1,2 +1,0 @@
-(akirak-clipboard :fetcher github :repo "akirak/trivial-elisps"
-                  :files ("akirak-clipboard.el"))
