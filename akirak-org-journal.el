@@ -94,10 +94,12 @@ after the heading, if any.
 If the point is already in the designated location, it will open
 `org-agenda' in another window."
   (interactive "P")
-  (let ((point (point)))
+  (let ((point (point))
+        (initial-buffer (buffer-name)))
     (org-journal-new-entry t)
     (re-search-backward (rx bol "* "))
-    (if (equal point (point))
+    (if (and (equal initial-buffer (buffer-name))
+             (equal point (point)))
         (let ((org-agenda-window-setup 'other-window))
           (org-agenda nil "a"))
       (org-content 3)
