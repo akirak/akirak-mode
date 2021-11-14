@@ -31,10 +31,13 @@
 
 (require 'org-starter)
 (require 'transient)
+(require 'org-capture)
 
 (require 'akirak-org-capture)
 (require 'akirak-org-journal)
 (require 'akirak-clipboard)
+
+(declare-function org-clocking-p "org-clock")
 
 ;;;; Main
 
@@ -109,7 +112,10 @@
 
 ;;;###autoload
 (defun akirak-capture (arg)
-  "Capture something."
+  "Capture something.
+
+When two universal prefixes are given as ARG, it jumps to the
+recently captured location, as in `org-capture'."
   (interactive "P")
   (pcase arg
     ('(16) (org-capture '(16)))
@@ -117,6 +123,7 @@
 
 ;;;; Private utility functions
 (defun akirak-capture--clock-description ()
+  "Return the description of the current clock."
   (if (and org-clock-marker
            (markerp org-clock-marker)
            (buffer-live-p (marker-buffer org-clock-marker)))
@@ -136,8 +143,15 @@
     "No last clock"))
 
 ;;;; Public helper functions
-(cl-defun akirak-capture-entry-to-clock (template &key prepend entry-end)
-  "Capture an entry to the current clock."
+(cl-defun akirak-capture-entry-to-clock (template &key entry-end prepend)
+  "Capture an entry to the current clock.
+
+TEMPLATE is a string.
+
+If ENTRY-END is non-nil, the point is moved to the end of the
+entry. See `org-entry-end-position'.for details.
+
+For other options such as PREPEND, see `org-capture-templates'."
   (let ((org-capture-entry `("" ""
                              entry
                              (function

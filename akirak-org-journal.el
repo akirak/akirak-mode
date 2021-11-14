@@ -32,6 +32,8 @@
 (require 'org)
 (require 'org-journal)
 
+(defvar org-agenda-window-setup)
+
 ;;;###autoload
 (defun akirak-org-journal-find-location (&optional time)
   "Go to the beginning of the journal file.

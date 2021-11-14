@@ -30,6 +30,8 @@
 ;;; Code:
 
 (require 'akirak-url)
+(require 'cl-lib)
+(require 'subr-x)
 
 (defun akirak-clipboard-strings ()
   "Return a list of strings from the clipboard and the kill ring."
@@ -41,13 +43,11 @@
 
 (defun akirak-clipboard-urls ()
   "Return a list of urls from the clipboard and the kill ring."
-  (cl-flet
-      ((remove-dups (items)
-                    (cl-remove-duplicates items :test #'string-equal)))
-    (thread-last (akirak-clipboard-strings)
-      (mapcar #'akirak-url-match-html-string)
-      (delq nil)
-      (remove-dups))))
+  (cl-remove-duplicates
+   (thread-last (akirak-clipboard-strings)
+     (mapcar #'akirak-url-match-html-string)
+     (delq nil))
+   :test #'string-equal))
 
 (provide 'akirak-clipboard)
 ;;; akirak-clipboard.el ends here
