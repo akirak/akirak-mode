@@ -102,8 +102,7 @@ If the point is already in the designated location, it will open
              (equal point (point)))
         (let ((org-agenda-window-setup 'other-window))
           (org-agenda nil "a"))
-      (org-content 3)
-      (org-show-set-visibility 'local)
+      (akirak-org-journal--overview)
       ;; I have a dynamic block for time tracking in each journal.
       ;; I want to update its contents when I review the journal.
       (when arg
@@ -111,6 +110,22 @@ If the point is already in the designated location, it will open
           (forward-line)
           (when (looking-at org-dblock-start-re)
             (org-dblock-update)))))))
+
+(defun akirak-org-journal--overview ()
+  "Display an overview of the current entry."
+  ;; `org-journal--finalize-view' sets the heading visibility,
+  ;; which I don't want because it is redundant.
+  ;; There is no way to avoid that at present.
+  (org-content 3)
+  (org-show-set-visibility 'local))
+
+;;;###autoload
+(defun akirak-org-journal-setup ()
+  "Set up advices and hooks `org-journal'."
+  (advice-add #'org-journal-next-entry
+              :after #'akirak-org-journal--overview)
+  (advice-add #'org-journal-previous-entry
+              :after #'akirak-org-journal--overview))
 
 (provide 'akirak-org-journal)
 ;;; akirak-org-journal.el ends here
