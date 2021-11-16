@@ -346,7 +346,6 @@
    (akirak-org-journal-group-target "Random")))
 
 (transient-define-suffix akirak-capture--journal-todo-target ()
-  :class 'transient-suffix
   :if (lambda () (bound-and-true-p org-journal-dir))
   :description "Todo (org-journal)"
   (interactive)
@@ -357,7 +356,6 @@
 ;;;; Specific actions
 
 (transient-define-suffix akirak-capture-org-research ()
-  :class 'transient-suffix
   :if (lambda () (bound-and-true-p org-journal-dir))
   :description "Start a research topic"
   (interactive)
@@ -375,7 +373,6 @@
     (org-capture)))
 
 (transient-define-suffix akirak-capture-news-session ()
-  :class 'transient-suffix
   :if (lambda () (bound-and-true-p org-journal-dir))
   :description "Start a news session"
   (interactive)
