@@ -401,7 +401,7 @@
   ["Targets for generic template"
    ("@" akirak-capture--clock-target)
    ("i" akirak-capture--info-target)
-   ("r" akirak-capture--random-target)
+   ("d" akirak-capture--random-target)
    ("t" akirak-capture--journal-todo-target)]
   ["New session - Clock in"
    ("r" akirak-capture-org-research)
