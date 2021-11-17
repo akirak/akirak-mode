@@ -101,12 +101,6 @@ of the following values:
             ((pred stringp) body)
             (`t "%?"))))
 
-(defun akirak-org-capture-make-link-entry-body (url)
-  "Create a template string containing URL as the headline."
-  (akirak-org-capture-make-entry-body
-    (org-link-make-string url
-                          (akirak-readable-url-title url))
-    :body t))
 (defun akirak-org-capture-add-templates (templates)
   "Add TEMPLATES to `org-capture-templates' without duplicates."
   (declare (indent 1))
