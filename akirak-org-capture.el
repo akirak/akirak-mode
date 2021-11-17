@@ -33,6 +33,8 @@
 (require 'ol)
 (require 'akirak-readable)
 
+(defvar org-capture-templates)
+
 (defgroup akirak-org-capture
   nil
   ""
@@ -105,6 +107,16 @@ of the following values:
     (org-link-make-string url
                           (akirak-readable-url-title url))
     :body t))
+(defun akirak-org-capture-add-templates (templates)
+  "Add TEMPLATES to `org-capture-templates' without duplicates."
+  (declare (indent 1))
+  (prog1 org-capture-templates
+    (pcase-dolist (`(,key . ,args) templates)
+      (if-let (cell (assoc key org-capture-templates))
+          (setcdr cell args)
+        (add-to-list 'org-capture-templates
+                     (cons key args)
+                     t)))))
 
 (provide 'akirak-org-capture)
 ;;; akirak-org-capture.el ends here
