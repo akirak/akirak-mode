@@ -86,8 +86,12 @@ of the following values:
   (concat "* " (if todo
                    (concat todo " ")
                  "")
-          ;; TODO: Accept t as the headline value
-          headline
+          (pcase headline
+            ((pred stringp) headline)
+            (`(url ,url) (org-link-make-string url (akirak-readable-url-title url)))
+            (`prompt "%^{headline}")
+            (`t "%?")
+            (_ (error "Invalid headline value: %s" headline)))
           (pcase tags
             (`nil "")
             ((pred stringp) (format " :%s:" tags))
