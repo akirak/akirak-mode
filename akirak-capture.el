@@ -331,62 +331,6 @@
                     " > "))))
             "N/A")))
 
-(transient-define-suffix akirak-capture--info-target ()
-  :description "Information (org-journal)"
-  :if (lambda () (bound-and-true-p org-journal-dir))
-  (interactive)
-  (akirak-capture--new-entry
-   (akirak-org-journal-group-target "Information")))
-
-(transient-define-suffix akirak-capture--random-target ()
-  :description "Random (org-journal)"
-  :if (lambda () (bound-and-true-p org-journal-dir))
-  (interactive)
-  (akirak-capture--new-entry
-   (akirak-org-journal-group-target "Random")))
-
-(transient-define-suffix akirak-capture--journal-todo-target ()
-  :if (lambda () (bound-and-true-p org-journal-dir))
-  :description "Todo (org-journal)"
-  (interactive)
-  (setq akirak-capture-todo-keyword t)
-  (akirak-capture--new-entry
-   #'akirak-org-journal-find-location))
-
-;;;; Specific actions
-
-(transient-define-suffix akirak-capture-org-research ()
-  :if (lambda () (bound-and-true-p org-journal-dir))
-  :description "Start a research topic"
-  (interactive)
-  (let ((org-capture-entry `("" ""
-                             entry
-                             (function
-                              ,(akirak-org-journal-group-target "Research"
-                                 :tags "@research"))
-                             ,(akirak-org-capture-make-entry-body
-                                "%?"
-                                :todo "STARTED"
-                                :body nil)
-                             :clock-in t
-                             :clock-resume t)))
-    (org-capture)))
-
-(transient-define-suffix akirak-capture-news-session ()
-  :if (lambda () (bound-and-true-p org-journal-dir))
-  :description "Start a news session"
-  (interactive)
-  (let ((org-capture-entry `("" ""
-                             entry
-                             (function akirak-org-journal-find-location)
-                             ,(akirak-org-capture-make-entry-body
-                                "News"
-                                :tags "@news"
-                                :body t)
-                             :clock-in t
-                             :clock-resume t)))
-    (org-capture)))
-
 ;;;; Prefix
 
 (transient-define-prefix akirak-capture-dispatch (&rest plist)
@@ -398,14 +342,6 @@
    ;; ("-i" akirak-capture--set-clock-in)
    ("+" akirak-capture--org-block-content)
    ("-l" akirak-capture--link-content)]
-  ["Targets for generic template"
-   ("@" akirak-capture--clock-target)
-   ("i" akirak-capture--info-target)
-   ("d" akirak-capture--random-target)
-   ("t" akirak-capture--journal-todo-target)]
-  ["New session - Clock in"
-   ("r" akirak-capture-org-research)
-   ("n" akirak-capture-news-session)]
   ["Others"
    ;; ("s" "Screen" akirak-capture-screen)
    ("o" "Org Capture" org-capture)]
