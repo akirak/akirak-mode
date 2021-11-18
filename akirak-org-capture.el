@@ -32,6 +32,7 @@
 (require 'org)
 (require 'ol)
 (require 'akirak-readable)
+(require 'akirak-read)
 
 (defvar org-capture-templates)
 
@@ -49,6 +50,7 @@
   "String appended to the body of `org-capture' by default."
   :type 'string)
 
+;;;###autoload
 (cl-defun akirak-org-capture-make-entry-body (headline &key
                                                        todo tags
                                                        (drawer akirak-org-capture-default-drawer)
@@ -105,6 +107,7 @@ of the following values:
             ((pred stringp) body)
             (`t "%?"))))
 
+;;;###autoload
 (defun akirak-org-capture-add-templates (templates)
   "Add TEMPLATES to `org-capture-templates' without duplicates."
   (declare (indent 1))
