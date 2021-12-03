@@ -53,33 +53,45 @@ date, which is given to `org-journal-new-entry'."
   (org-show-entry))
 
 ;;;###autoload
-(cl-defun akirak-org-journal-ensure-group (heading &key tags)
+(cl-defun akirak-org-journal-ensure-group (heading &key tags todo)
   "Go to a particular group in the journal.
 
 This moves the point to a group with a HEADING. If the heading
 does not , it is created.
 
-Optionally, you can specify TAGS which is added to the heading."
+Optionally, you can specify TAGS which is added to the heading.
+
+If TODO is non-nil, it is inserted into the heading. It can be
+either t or a string."
   (declare (indent 1))
   (akirak-org-journal-find-location)
   (let ((end (save-excursion
                (org-end-of-subtree 'invisible))))
-    (if (re-search-forward (rx-to-string `(and bol "**" (+ space) ,heading))
+    (if (re-search-forward (rx-to-string `(and bol "**" (+ space)
+                                               (regexp org-todo-regexp)
+                                               ,heading))
                            end t)
         (end-of-line)
       (goto-char end)
       (progn
         (just-one-space -1)
         (delete-horizontal-space)
-        (insert "\n** " heading))
+        (insert "\n** "
+                (if todo
+                    (concat (if (stringp todo)
+                                todo
+                              "TODO")
+                            " ")
+                  "")
+                heading))
       (when tags
         (org-set-tags tags))
       (org-end-of-line))))
 
-(cl-defmacro akirak-org-journal-group-target (heading &key tags)
+(cl-defmacro akirak-org-journal-group-target (heading &key tags todo)
   "Return a function that ensures a journal group.
 
-For HEADING and TAGS, see `akirak-org-journal-ensure-group'."
+For HEADING, TAGS, and TODO, see `akirak-org-journal-ensure-group'."
   (declare (indent 1))
   `(lambda () (akirak-org-journal-ensure-group ,heading
                 :tags ,tags)))
