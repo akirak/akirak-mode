@@ -41,7 +41,7 @@
   :group 'git
   :group 'akirak)
 
-(defcustom akirak-git-clone-root "~/archives/personal/git/"
+(defcustom akirak-git-clone-root nil
   "Root of the repositories."
   :type 'directory)
 
