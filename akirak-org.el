@@ -40,10 +40,11 @@
    (while (re-search-forward (org-re-property "sorting_type") nil t)
      (let ((line (thing-at-point 'line t)))
        (if (string-match org-property-re line)
-           (org-sort-entries nil
-                             (thread-last (match-string 3 line)
-                               (string-to-list)
-                               (car)))
+           (org-save-outline-visibility nil
+             (org-sort-entries nil
+                               (thread-last (match-string 3 line)
+                                 (string-to-list)
+                                 (car))))
          (error "Property didn't match")))
      (goto-char (org-entry-end-position)))))
 
