@@ -68,7 +68,8 @@ either t or a string."
   (let ((end (save-excursion
                (org-end-of-subtree 'invisible))))
     (if (re-search-forward (rx-to-string `(and bol "**" (+ space)
-                                               (regexp ,org-todo-regexp)
+                                               (? (regexp ,org-todo-regexp)
+                                                  (+ space))
                                                ,heading))
                            end t)
         (end-of-line)
