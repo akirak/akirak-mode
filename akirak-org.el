@@ -40,7 +40,7 @@
    (while (re-search-forward (org-re-property "sorting_type") nil t)
      (let ((line (thing-at-point 'line t)))
        (if (string-match org-property-re line)
-           (org-save-outline-visibility nil
+           (org-save-outline-visibility t
              (org-sort-entries nil
                                (thread-last (match-string 3 line)
                                  (string-to-list)
