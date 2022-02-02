@@ -43,5 +43,41 @@
               (parents (akirak-project-group-list)))
     (cl-find parent parents :test #'file-equal-p)))
 
+(defun akirak-project-discover-toplevels ()
+  "Discover projects directly under the home directory."
+  (project-remember-projects-under "~/"))
+
+(defun akirak-project-discover-archives ()
+  "Discover projects under ~/archives/oss/."
+  (let ((oss-root "~/archives/oss/"))
+    (when (file-exists-p oss-root)
+      (project-remember-projects-under (file-truename oss-root)
+                                       'recursive))))
+
+(defun akirak-project-discover-workspaces ()
+  "Discover projects under ~/work/."
+  (pcase-dolist (`(,path ,target . ,_)
+                 (directory-files-and-attributes
+                  "~/work/" t (rx bol (not (any "."))) t))
+    (pcase target
+      (`nil)
+      (`t
+       (project-remember-projects-under path t))
+      ((pred stringp)
+       (project-remember-projects-under target t)))))
+
+(defcustom akirak-project-discover-hooks
+  '(akirak-project-discover-toplevels
+    akirak-project-discover-archives
+    akirak-project-discover-workspaces)
+  "List of functions to run to discover projects."
+  :type 'hook)
+
+;;;###autoload
+(defun akirak-project-discover ()
+  "Remember projects in the home directory."
+  (interactive)
+  (run-hooks 'akirak-project-discover-hooks))
+
 (provide 'akirak-project)
 ;;; akirak-project.el ends here
