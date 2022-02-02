@@ -62,9 +62,12 @@
     (pcase target
       (`nil)
       (`t
-       (project-remember-projects-under path t))
-      ((pred stringp)
-       (project-remember-projects-under target t)))))
+       (project-remember-projects-under (file-name-as-directory path)
+                                        t))
+      ((and (pred stringp)
+            (guard (file-directory-p target)))
+       (project-remember-projects-under (file-name-as-directory target)
+                                        t)))))
 
 (defcustom akirak-project-discover-hooks
   '(akirak-project-discover-toplevels
