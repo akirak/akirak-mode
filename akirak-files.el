@@ -2,6 +2,7 @@
 
 (defvar akirak-files-home-symlink-alist nil)
 
+;;;###autoload
 (defun akirak-files-update-abbrev-alist ()
   "Update the value of `directory-abbrev-alist'."
   (interactive)
@@ -39,6 +40,7 @@
                     (lambda (x y)
                       (string-equal (car x) (car y)))))))
 
+;;;###autoload
 (defun akirak-files-ensure-abbrev-list ()
   "Ensure that `directory-abbrev-alist' is set."
   (unless akirak-files-home-symlink-alist

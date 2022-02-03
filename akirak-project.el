@@ -3,6 +3,7 @@
 (require 'f)
 (require 'dash)
 (require 'cl-lib)
+(require 'project)
 
 (declare-function magit-repository-directories "ext:magit-repos")
 
