@@ -20,5 +20,14 @@
     (when (> n 0)
       (message "Added %d projects" n))))
 
+;;;###autoload
+(defun akirak-project-switch (dir)
+  "Switch to a project at DIR.
+
+This is an alternative to `project-switch-project' which does not
+display alternative actions."
+  (interactive (list (project-prompt-project-dir)))
+  (magit-status dir))
+
 (provide 'akirak-project)
 ;;; akirak-project.el ends here
