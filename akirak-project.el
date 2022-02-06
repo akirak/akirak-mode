@@ -24,6 +24,19 @@
       (message "Added %d projects" n))))
 
 ;;;###autoload
+(defun akirak-project-maintain-list ()
+  "Update paths in the project list to conform to the policy."
+  (interactive)
+  (project--ensure-read-project-list)
+  (let (modified)
+    (dolist (cell project--list)
+      (when (file-name-absolute-p (car cell))
+        (setcar cell (abbreviate-file-name (car cell)))
+        (setq modified t)))
+    (when modified
+      (project--write-project-list))))
+
+;;;###autoload
 (defun akirak-project-switch (dir)
   "Switch to a project at DIR.
 
