@@ -4,6 +4,8 @@
 (require 'subr-x)
 (require 'project)
 
+(declare-function github-linguist-lookup "github-linguist")
+
 ;;;###autoload
 (defun akirak-project-import-from-magit ()
   "Add projects from `magit-repository-directories'."
@@ -45,6 +47,21 @@ display alternative actions."
     (if (eq action 'metadata)
         '(metadata . ((category . project-root)))
       (complete-with-action action roots string pred))))
+
+;;;###autoload
+(defun akirak-project-root-annotator (root)
+  (when-let (language-alist (github-linguist-lookup root))
+    (cl-labels
+        ((dim (str) (propertize str 'face 'font-lock-comment-face))
+         (propertize-name (str) (propertize str 'face 'marginalia-string)) )
+      (concat (dim " (")
+              (mapconcat #'propertize-name
+                         (thread-last language-alist
+                           (seq-take-while (pcase-lambda (`(,_language . ,percent))
+                                             (> percent 30.0)))
+                           (mapcar #'car))
+                         (dim ", "))
+              (dim ")")))))
 
 (provide 'akirak-project)
 ;;; akirak-project.el ends here
