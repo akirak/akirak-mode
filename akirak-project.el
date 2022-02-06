@@ -18,6 +18,7 @@
           (add-to-list 'project--list (list dir) 'append)
           (cl-incf n))))
     (when (> n 0)
+      (project--write-project-list)
       (message "Added %d projects" n))))
 
 ;;;###autoload
