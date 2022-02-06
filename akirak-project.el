@@ -27,8 +27,24 @@
 
 This is an alternative to `project-switch-project' which does not
 display alternative actions."
-  (interactive (list (project-prompt-project-dir)))
+  (interactive (list (akirak-prompt-project-root
+                      "Switch to a project: ")))
   (magit-status dir))
+
+(defun akirak-prompt-project-root (prompt)
+  "Select a project root with a PROMPT string."
+  (completing-read prompt (akirak-project-root-completions
+                           (project-known-project-roots))
+                   nil t))
+
+;; Based on `project--file-completion-table' from project.el 0.8.1, but with a
+;; different category.
+(defun akirak-project-root-completions (roots)
+  "Return a completion table for project ROOTS."
+  (lambda (string pred action)
+    (if (eq action 'metadata)
+        '(metadata . ((category . project-root)))
+      (complete-with-action action roots string pred))))
 
 (provide 'akirak-project)
 ;;; akirak-project.el ends here
