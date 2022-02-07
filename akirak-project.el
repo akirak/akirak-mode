@@ -44,7 +44,9 @@ This is an alternative to `project-switch-project' which does not
 display alternative actions."
   (interactive (list (akirak-prompt-project-root
                       "Switch to a project: ")))
-  (magit-status dir))
+  (if (file-directory-p (expand-file-name ".git" dir))
+      (magit-status dir)
+    (dired dir)))
 
 (defun akirak-prompt-project-root (prompt)
   "Select a project root with a PROMPT string."
