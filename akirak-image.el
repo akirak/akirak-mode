@@ -1,17 +1,17 @@
-;;; akirak-images.el ---  -*- lexical-binding: t -*-
+;;; akirak-image.el ---  -*- lexical-binding: t -*-
 
 (require 'pcase)
 
 (defvar url-http-end-of-headers)
 
-(defcustom akirak-images-dir "~/resources/images/"
+(defcustom akirak-image-dir "~/resources/images/"
   ""
   :type 'directory)
 
-(defun akirak-images-escape-filename (filename)
+(defun akirak-image-escape-filename (filename)
   (replace-regexp-in-string (rx (not (any "-_." alnum))) "-" filename))
 
-(defun akirak-images-file-name-from-url (url-string &optional mime-type)
+(defun akirak-image-file-name-from-url (url-string &optional mime-type)
   (let* ((url (url-generic-parse-url url-string))
          (host (string-remove-prefix "www." (url-host url)))
          (path (cdr (split-string (url-filename url) "/")))
@@ -34,20 +34,20 @@
                          (match-string 1 mime-type))
                         (_
                          (error "Did not match a mime type %s" mime-type))))))
-    (concat (akirak-images-escape-filename (url-host url))
+    (concat (akirak-image-escape-filename (url-host url))
             "/"
-            (akirak-images-escape-filename prefix)
-            (akirak-images-escape-filename basename)
+            (akirak-image-escape-filename prefix)
+            (akirak-image-escape-filename basename)
             "-"
-            (akirak-images-escape-filename suffix)
+            (akirak-image-escape-filename suffix)
             "."
             extension)))
 
-(defun akirak-images-insert-link (url)
+(defun akirak-image-insert-link (url)
   (interactive "sUrl: ")
-  (unless (and akirak-images-dir (file-directory-p akirak-images-dir))
-    (error "Variable `akirak-images-dir' points to a non-existent directory %s"
-           akirak-images-dir))
+  (unless (and akirak-image-dir (file-directory-p akirak-image-dir))
+    (error "Variable `akirak-image-dir' points to a non-existent directory %s"
+           akirak-image-dir))
   (let* ((buffer (url-retrieve-synchronously url t t 5))
          (outfile (or (catch 'filename
                         (condition-case err
@@ -56,10 +56,10 @@
                                   (goto-char (point-min))
                                   (unless (url-http-parse-headers)
                                     (error "URL %s does not return a valid content"))
-                                  (let* ((outfile (expand-file-name (akirak-images-file-name-from-url
+                                  (let* ((outfile (expand-file-name (akirak-image-file-name-from-url
                                                                      url
                                                                      url-http-content-type)
-                                                                    akirak-images-dir))
+                                                                    akirak-image-dir))
                                          (outdir (file-name-directory outfile)))
                                     (unless (file-directory-p outdir)
                                       (make-directory outdir))
@@ -69,8 +69,8 @@
                                     (throw 'filename outfile)))
                               (kill-buffer buffer))
                           (error nil)))
-                      (let* ((outfile (expand-file-name (akirak-images-file-name-from-url url)
-                                                        akirak-images-dir))
+                      (let* ((outfile (expand-file-name (akirak-image-file-name-from-url url)
+                                                        akirak-image-dir))
                              (outdir (file-name-directory outfile)))
                         (unless (file-directory-p outdir)
                           (make-directory outdir))
@@ -89,7 +89,7 @@
     (insert "#+DOWNLOADED: " url " @ " (format-time-string "%F %R:%S") "\n"
             "[[file:" (abbreviate-file-name outfile) "]]\n")))
 
-(defun akirak-images-org-move-downloads ()
+(defun akirak-image-org-move-downloads ()
   (interactive)
   (unless (derived-mode-p 'org-mode)
     (user-error "Must be run in org-mode"))
@@ -104,11 +104,11 @@
                (if (re-search-forward org-link-plain-re (line-end-position 1) t)
                    (let* ((filename (match-string 2))
                           (region (seq-take (match-data 0) 2))
-                          (newfile (expand-file-name (akirak-images-file-name-from-url url)
-                                                     akirak-images-dir))
+                          (newfile (expand-file-name (akirak-image-file-name-from-url url)
+                                                     akirak-image-dir))
                           (outdir (file-name-directory newfile)))
                      (cond
-                      ((and (string-prefix-p (expand-file-name akirak-images-dir)
+                      ((and (string-prefix-p (expand-file-name akirak-image-dir)
                                              (expand-file-name filename))
                             (file-exists-p filename)))
                       ((file-exists-p filename)
@@ -124,13 +124,13 @@
                        (progn
                          (delete-region (line-beginning-position 0)
                                         (line-end-position 1))
-                         (akirak-images-insert-link url)
+                         (akirak-image-insert-link url)
                          (cl-incf count)))))
                  (delete-region (line-beginning-position 1)
                                 (line-end-position 1))
-                 (akirak-images-insert-link url)
+                 (akirak-image-insert-link url)
                  (cl-incf count))))))
       (message "Replaced %d links in the file" count))))
 
-(provide 'akirak-images)
-;;; akirak-images.el ends here
+(provide 'akirak-image)
+;;; akirak-image.el ends here
