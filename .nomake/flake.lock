@@ -1,0 +1,146 @@
+{
+  "nodes": {
+    "akirak": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1644568041,
+        "narHash": "sha256-EUBnTNq3wzEKnylfBBo7TOL2iY29GVFJTZzL0552MuE=",
+        "owner": "akirak",
+        "repo": "trivial-elisps",
+        "rev": "ad873ba5f632790e87286798d4b24879fcaf3dc0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "akirak",
+        "repo": "trivial-elisps",
+        "type": "github"
+      }
+    },
+    "avy": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1641110707,
+        "narHash": "sha256-lGs7IFQvoskuRkEoN3N+rTJa3dQ/3WUL3Yj03bvMNV4=",
+        "owner": "abo-abo",
+        "repo": "avy",
+        "rev": "ba5f035be33693d1a136a5cbeedb24327f551a92",
+        "type": "github"
+      },
+      "original": {
+        "owner": "abo-abo",
+        "repo": "avy",
+        "type": "github"
+      }
+    },
+    "dash": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1632096711,
+        "narHash": "sha256-oeIUEe5OGgij6IessN6bmS7re5r+D5BlrU4MOsaK3JE=",
+        "owner": "magnars",
+        "repo": "dash.el",
+        "rev": "da167c51e9fd167a48d06c7c0ee8e3ac7abd9718",
+        "type": "github"
+      },
+      "original": {
+        "owner": "magnars",
+        "repo": "dash.el",
+        "type": "github"
+      }
+    },
+    "f": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1624532602,
+        "narHash": "sha256-vsslMtF8dQm6cJYb07SxPO0rp44lfRONSxRHj3e52Ew=",
+        "owner": "rejeep",
+        "repo": "f.el",
+        "rev": "50af874cd19042f17c8686813d52569b1025c76a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rejeep",
+        "repo": "f.el",
+        "type": "github"
+      }
+    },
+    "memoize": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1578083801,
+        "narHash": "sha256-XYmPtJk0jteu30IQtwNnPaVSLN+nFAdjjVRvwSMZToA=",
+        "owner": "skeeto",
+        "repo": "emacs-memoize",
+        "rev": "51b075935ca7070f62fae1d69fe0ff7d8fa56fdd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "skeeto",
+        "repo": "emacs-memoize",
+        "type": "github"
+      }
+    },
+    "org-journal": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1641375905,
+        "narHash": "sha256-BtXe3tavyHAbQ5E3mNlmlvyrR9KxscX6mBbyvkRNUUE=",
+        "owner": "bastibe",
+        "repo": "org-journal",
+        "rev": "f121450610650c63aabf13afd0d2089e05fad2e4",
+        "type": "github"
+      },
+      "original": {
+        "owner": "bastibe",
+        "repo": "org-journal",
+        "type": "github"
+      }
+    },
+    "org-starter": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1640880380,
+        "narHash": "sha256-5H+V2bIjTV50FNXtzU97O5A/jVAIObJTz3NKZt0iMH4=",
+        "owner": "akirak",
+        "repo": "org-starter",
+        "rev": "6b1b3b045390bf1cff8214ece54da07c7a0aa8ad",
+        "type": "github"
+      },
+      "original": {
+        "owner": "akirak",
+        "repo": "org-starter",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "akirak": "akirak",
+        "avy": "avy",
+        "dash": "dash",
+        "f": "f",
+        "memoize": "memoize",
+        "org-journal": "org-journal",
+        "org-starter": "org-starter",
+        "s": "s"
+      }
+    },
+    "s": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1623824393,
+        "narHash": "sha256-F0BrAlsxBskNzkyHriG3yNY+PZ7npYi1x98Ci5yVDAo=",
+        "owner": "magnars",
+        "repo": "s.el",
+        "rev": "08661efb075d1c6b4fa812184c1e5e90c08795a9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "magnars",
+        "repo": "s.el",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
