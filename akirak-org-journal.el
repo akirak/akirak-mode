@@ -34,6 +34,28 @@
 
 (defvar org-agenda-window-setup)
 
+(defvar akirak-org-journal-current-file nil
+  "The current journal entry.")
+
+;;;###autoload
+(defun akirak-org-journal-setup ()
+  "Set up advices and hooks `org-journal'."
+  ;; (when (eq org-journal-file-type 'weekly)
+  ;;   (setq org-journal-file-header
+  ;;         (defun akirak/org-journal-weekly-header (time)
+  ;;           (format-time-string "#+TITLE: Week %-W, %Y" time))))
+  (advice-add #'org-journal-next-entry
+              :after #'akirak-org-journal--overview)
+  (advice-add #'org-journal-previous-entry
+              :after #'akirak-org-journal--overview)
+  (add-to-list 'recentf-exclude #'akirak-org-journal-file-p t))
+
+(defun akirak-org-journal-file-p (file)
+  (ignore-errors
+    (and (string-prefix-p (expand-file-name org-journal-dir)
+                          (expand-file-name file))
+         (string-suffix-p ".org" file))))
+
 ;;;###autoload
 (defun akirak-org-journal-find-location (&optional time)
   "Go to the beginning of the journal file.
@@ -133,12 +155,28 @@ If the point is already in the designated location, it will open
   (org-show-set-visibility 'local))
 
 ;;;###autoload
-(defun akirak-org-journal-setup ()
-  "Set up advices and hooks `org-journal'."
-  (advice-add #'org-journal-next-entry
-              :after #'akirak-org-journal--overview)
-  (advice-add #'org-journal-previous-entry
-              :after #'akirak-org-journal--overview))
+(defun akirak-org-journal-refile-to-date (time)
+  (interactive (list (org-read-date nil 'to-time)))
+  (cond
+   ((derived-mode-p 'org-mode)
+    (let* ((orig-marker (prog1 (point-marker)
+                          (akirak-org-journal-find-location time)))
+           (filename (buffer-file-name))
+           (rfloc (list (nth 4 (org-heading-components))
+                        filename
+                        nil
+                        (point))))
+      (with-current-buffer (marker-buffer orig-marker)
+        (goto-char (marker-position orig-marker))
+        (org-refile nil nil rfloc))))))
+
+(defalias 'akirak-org-journal-files 'org-journal--list-files
+  "Return a list of journal files in `org-journal-dir'.")
+
+(defun akirak-org-journal-current-file ()
+  (ignore-errors
+    (setq akirak-org-journal-current-file
+          (org-journal--get-entry-path (current-time)))))
 
 (provide 'akirak-org-journal)
 ;;; akirak-org-journal.el ends here
