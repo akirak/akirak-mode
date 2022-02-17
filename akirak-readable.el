@@ -29,7 +29,6 @@
 
 ;;; Code:
 
-(require 'memoize)
 (require 'subr-x)
 
 (declare-function org-web-tools--get-url "ext:org-web-tools")
@@ -43,7 +42,8 @@
                     (org-web-tools--get-url url)))
     (org-web-tools--html-title html)))
 
-(memoize 'akirak-readable-url-title 600)
+(when (require 'memoize nil t)
+  (memoize 'akirak-readable-url-title 600))
 
 (provide 'akirak-readable)
 ;;; akirak-readable.el ends here
