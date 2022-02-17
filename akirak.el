@@ -4,7 +4,7 @@
 
 ;; Author: Akira Komamura <akira.komamura@gmail.com>
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (avy "0.5") (org-starter "0.2") (transient "0.3") (f "0.20") (org "9.4") (org-journal "2.1") (memoize "1.1"))
+;; Package-Requires: ((emacs "28.1"))
 ;; Keywords: convenience
 ;; URL: https://github.com/akirak/trivial-elisps
 
@@ -31,11 +31,11 @@
 
 ;;; Code:
 
-(require 'akirak-elec-pair)
-(require 'akirak-git-clone)
-(require 'akirak-readable)
-(require 'akirak-capture)
-(require 'akirak-org-journal)
+(with-eval-after-load 'org-capture
+  (require 'doct nil t)
+  (require 'akirak-org-capture nil t))
+(with-eval-after-load 'org-journal
+  (require 'akirak-org-journal nil t))
 
 (provide 'akirak)
 ;;; akirak.el ends here
