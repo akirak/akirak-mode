@@ -1,7 +1,8 @@
 ;;; akirak-org-macros.el ---  -*- lexical-binding: t -*-
 
 (declare-function org-reverse-datetree-refile-to-file "ext:org-reverse-datetree")
-(declare-function org-starter-lcoate-file "ext:org-starter")
+(declare-function org-starter-locate-file "ext:org-starter")
+(declare-function akirak-org-journal-ensure-group "akirak-org-journal")
 
 (defgroup akirak-org-macros nil
   ""
@@ -16,6 +17,14 @@
       (org-starter-locate-file ,filename nil t) nil
       :ask-always arg
       :prefer '("CREATED_TIME" "CREATED_AT" "CLOSED"))))
+
+(cl-defmacro akirak-org-journal-group-target (heading &key tags todo)
+  "Return a function that ensures a journal group.
+
+For HEADING, TAGS, and TODO, see `akirak-org-journal-ensure-group'."
+  (declare (indent 1))
+  `(lambda () (akirak-org-journal-ensure-group ,heading
+                :tags ,tags)))
 
 (provide 'akirak-org-macros)
 ;;; akirak-org-macros.el ends here

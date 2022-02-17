@@ -111,14 +111,6 @@ either t or a string."
         (org-set-tags tags))
       (org-end-of-line))))
 
-(cl-defmacro akirak-org-journal-group-target (heading &key tags todo)
-  "Return a function that ensures a journal group.
-
-For HEADING, TAGS, and TODO, see `akirak-org-journal-ensure-group'."
-  (declare (indent 1))
-  `(lambda () (akirak-org-journal-ensure-group ,heading
-                :tags ,tags)))
-
 ;;;###autoload
 (defun akirak-org-journal-overview (&optional arg)
   "Go to the current date in the journal and display an overview.
