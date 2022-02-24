@@ -16,7 +16,7 @@
 
 ;;;; Window manipulation
 
-(defun akirak-windoow-split--aggressively ()
+(defun akirak-window-split--aggressively ()
   (cond
    ((> (akirak-window--available-width) 80)
     (split-window-horizontally))
@@ -35,16 +35,17 @@
       (push leftw windows))
     (while (setq rightw (window-in-direction 'right rightw))
       (push rightw windows))
-    (-sum (-map (lambda (wnd)
-                  (if (window-dedicated-p wnd)
-                      0
-                    (- (+ (window-width wnd)
-                          ;; perfect-margin.el sets window margins
-                          (pcase (window-margins wnd)
-                            (`(,_) 0)
-                            (`(,left . ,right) (+ left right))))
-                       80)))
-                windows))))
+    (thread-last (mapcar (lambda (wnd)
+                           (if (window-dedicated-p wnd)
+                               0
+                             (- (+ (window-width wnd)
+                                   ;; perfect-margin.el sets window margins
+                                   (pcase (window-margins wnd)
+                                     (`(,_) 0)
+                                     (`(,left . ,right) (+ left right))))
+                                80)))
+                         windows)
+                 (cl-reduce #'+))))
 
 ;;;###autoload
 (defun akirak-window-split-and-select ()
@@ -55,7 +56,7 @@
        (delete-window)
        (balance-windows)))
     (_
-     (if-let ((window (akirak-windoow-split--aggressively)))
+     (if-let ((window (akirak-window-split--aggressively)))
          (progn
            (select-window window)
            (balance-windows))
