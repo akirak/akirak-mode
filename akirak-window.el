@@ -69,6 +69,16 @@
   (balance-windows))
 
 ;;;###autoload
+(defun akirak-window-setup-columns ()
+  "Create many window columns and select the center one."
+  (interactive)
+  (while (> (akirak-window--available-width) 80)
+    (split-window-horizontally)
+    (balance-windows))
+  (select-window (window-at (/ (frame-width) 2)
+                            (/ (frame-height) 2))))
+
+;;;###autoload
 (defun akirak-window-delete-below ()
   (interactive)
   (let ((initial-window (selected-window))
