@@ -56,7 +56,7 @@
        (delete-window)
        (balance-windows)))
     (_
-     (if-let ((window (akirak-window-split--aggressively)))
+     (if-let (window (akirak-window-split--aggressively))
          (progn
            (select-window window)
            (balance-windows))
