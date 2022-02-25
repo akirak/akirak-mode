@@ -20,6 +20,7 @@
 
 ;;;; Alternative display-buffer functions
 
+;;;###autoload
 (defun akirak-window-display-buffer-prefer-other-pane (buffer &rest args)
   "Display BUFFER in another pane in the current frame, if possible."
   (if-let (windows (akirak-window--find-other-panes))
