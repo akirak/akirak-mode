@@ -14,6 +14,14 @@
   (and (window-dedicated-p window)
        (not (window-in-direction 'below window))))
 
+;;;; Alternative display-buffer functions
+
+(defun akirak-window-display-buffer-prefer-other-pane (buffer &rest args)
+  "Display BUFFER in another pane in the current frame, if possible."
+  (if-let (windows (akirak/find-other-pane-windows))
+      (set-window-buffer (car windows) buffer)
+    (display-buffer buffer args)))
+
 ;;;; Window manipulation
 
 (defun akirak-window-split--aggressively ()
