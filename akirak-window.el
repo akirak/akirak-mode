@@ -1,5 +1,9 @@
 ;;; akirak-window.el ---  -*- lexical-binding: t -*-
 
+(defcustom akirak-window-skipped-buffers nil
+  "List of buffer names whose windows should never be selected."
+  :type '(repeat string))
+
 ;;;; Predicates
 
 (defun akirak-window-left-side-window-p (&optional window)
@@ -18,9 +22,35 @@
 
 (defun akirak-window-display-buffer-prefer-other-pane (buffer &rest args)
   "Display BUFFER in another pane in the current frame, if possible."
-  (if-let (windows (akirak/find-other-pane-windows))
+  (if-let (windows (akirak-window--find-other-panes))
       (set-window-buffer (car windows) buffer)
     (display-buffer buffer args)))
+
+(cl-defun akirak-window--find-other-panes ()
+  (when (> (frame-width) 240)
+    (thread-last (akirak-window--get-panes)
+                 (mapcar #'cdr)
+                 (cl-remove-if (lambda (ws)
+                                 (seq-some (lambda (it) (equal (selected-window) it))
+                                           ws)))
+                 (seq-sort-by #'length #'<)
+                 (car))))
+
+(defun akirak-window--get-panes ()
+  "Return an alist."
+  (thread-last (window-list)
+               (mapcar (lambda (w)
+                         (unless (or (window-minibuffer-p w)
+                                     (member (buffer-name (window-buffer w))
+                                             akirak-window-skipped-buffers)
+                                     (window-dedicated-p w))
+                           (cons (window-left-column w) w))))
+               (delq nil)
+               (seq-group-by #'car)
+               (seq-sort-by #'car #'<)
+               (mapcar (lambda (cell)
+                         (cons (car cell)
+                               (mapcar #'cdr (cdr cell)))))))
 
 ;;;; Window manipulation
 
