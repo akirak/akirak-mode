@@ -36,12 +36,19 @@
   "List of characters indicating an orientation of interpolation."
   :type '(repeat character))
 
-(defun akirak-elec-pair--new-bracket-pair ()
-  "Get the new bracket pairs from the user."
-  (let* ((open (read-char (format "Open paren (or %s for interpolation): "
-                                  (mapconcat #'char-to-string
-                                             akirak-elec-pair-special-chars
-                                             ""))))
+(defvar akirak-elec-pair-bounds nil)
+(defvar akirak-elec-pair-increment nil)
+
+(defun akirak-elec-pair--new-bracket-pair (&optional init)
+  "Get the new bracket pairs from the user.
+
+If INIT is given, it will be used as the first character of the
+pair."
+  (let* ((open (or init
+                   (read-char (format "Open paren (or %s for interpolation): "
+                                      (mapconcat #'char-to-string
+                                                 akirak-elec-pair-special-chars
+                                                 "")))))
          (specialp (memq open akirak-elec-pair-special-chars))
          (open-char (if specialp
                         (read-char "Open paren: ")
@@ -124,6 +131,41 @@
                      (+ (length prefix) end 1)
                    (1+ end)))
       (insert-char close-char))))
+
+;;;###autoload
+(defun akirak-elec-pair-self-insert ()
+  "Wrap the current sexp or region with a pair."
+  (interactive)
+  (let* ((bounds (if (region-active-p)
+                     (cons (region-beginning) (region-end))
+                   (bounds-of-thing-at-point 'sexp)))
+         (overlay (make-overlay (car bounds) (cdr bounds)))
+         (initial-pos (point))
+         (orig-hook post-self-insert-hook))
+    (setq akirak-elec-pair-bounds bounds)
+    (overlay-put overlay 'face 'highlight)
+    (unwind-protect
+        (progn
+          (setq post-self-insert-hook '(akirak-elec-pair-post-self-insert))
+          (goto-char (car bounds))
+          (call-interactively #'self-insert-command))
+      (delete-overlay overlay)
+      (setq post-self-insert-hook orig-hook)
+      (goto-char (+ initial-pos akirak-elec-pair-increment)))))
+
+;;;###autoload
+(defun akirak-elec-pair-post-self-insert ()
+  "Wrap the current sexp or region according to the next input."
+  (pcase-let* ((`(,open-char ,close-char ,prefix)
+                (akirak-elec-pair--new-bracket-pair (char-after (1- (point)))))
+               (inc (if prefix
+                        (1+ (length prefix))
+                      1)))
+    (when prefix
+      (insert-char open-char))
+    (goto-char (+ (cdr akirak-elec-pair-bounds) inc))
+    (insert-char close-char)
+    (setq akirak-elec-pair-increment inc)))
 
 (provide 'akirak-elec-pair)
 ;;; akirak-elec-pair.el ends here
