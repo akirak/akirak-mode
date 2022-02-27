@@ -153,7 +153,6 @@ pair."
       (setq post-self-insert-hook orig-hook)
       (goto-char (+ initial-pos akirak-elec-pair-increment)))))
 
-;;;###autoload
 (defun akirak-elec-pair-post-self-insert ()
   "Wrap the current sexp or region according to the next input."
   (pcase-let* ((`(,open-char ,close-char ,prefix)
