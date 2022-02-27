@@ -167,5 +167,27 @@ pair."
     (insert-char close-char)
     (setq akirak-elec-pair-increment inc)))
 
+;;;###autoload
+(defun akirak-elec-pair-wrap-post-yank ()
+  "Wrap the latest yank command output with a pair."
+  (interactive)
+  (pcase-let* ((start (mark))
+               (end (point))
+               (overlay (make-overlay start end))
+               (`(,open-char ,close-char ,prefix)
+                (progn
+                  (overlay-put overlay 'face 'highlight)
+                  (akirak-elec-pair--new-bracket-pair))))
+    (save-excursion
+      (delete-overlay overlay)
+      (goto-char start)
+      (when prefix
+        (insert prefix))
+      (insert-char open-char)
+      (goto-char (if prefix
+                     (+ (length prefix) end 1)
+                   (1+ end)))
+      (insert-char close-char))))
+
 (provide 'akirak-elec-pair)
 ;;; akirak-elec-pair.el ends here
