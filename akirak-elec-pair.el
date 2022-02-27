@@ -46,12 +46,17 @@
          (open-char (if specialp
                         (read-char "Open paren: ")
                       open))
-         (close-char (or (nth 1 (electric-pair-syntax-info open-char))
-                         (alist-get open-char '((?\{ . ?\})))
-                         (error "Cannot find syntax info for %c" open-char))))
+         (close-char (akirak-elec-pair--close-char open-char)))
     (list open-char
           close-char
           (when specialp (char-to-string open)))))
+
+(defun akirak-elec-pair--close-char (open-char)
+  "Return a character corresponding to OPEN-CHAR."
+  (or (nth 1 (electric-pair-syntax-info open-char))
+      (alist-get open-char
+                 '((?\{ . ?\})))
+      (error "Cannot find syntax info for %c" open-char)))
 
 ;;;###autoload
 (defun akirak-elec-pair-replace (c)
@@ -69,11 +74,7 @@
            (replacement-char (progn
                                (overlay-put overlay 'face 'highlight)
                                (read-char "New paren: ")))
-           (replacement-close-char (or (nth 1 (electric-pair-syntax-info replacement-char))
-                                       (alist-get replacement-char
-                                                  '((?\{ . ?\})))
-                                       (error "Cannot find syntax info for %c"
-                                              replacement-char))))
+           (replacement-close-char (akirak-elec-pair--close-char replacement-char)))
       (save-excursion
         (delete-overlay overlay)
         (goto-char start)
