@@ -30,6 +30,7 @@
 ;;; Code:
 
 (require 'akirak-url)
+(require 'akirak-insert)
 (require 'cl-lib)
 (require 'subr-x)
 
@@ -48,6 +49,19 @@
      (mapcar #'akirak-url-match-html-string)
      (delq nil))
    :test #'string-equal))
+
+(defun akirak-clipboard-complete-url (prompt)
+  "Complete a url from the clipboard with PROMPT."
+  (completing-read prompt
+                   (akirak-clipboard--url-completion
+                    (akirak-clipboard-urls))))
+
+(defun akirak-clipboard--url-completion (urls)
+  "Return a completion table for URLS."
+  (lambda (string pred action)
+    (if (eq action 'metadata)
+        '(metadata . ((category . url)))
+      (complete-with-action action urls string pred))))
 
 (provide 'akirak-clipboard)
 ;;; akirak-clipboard.el ends here
