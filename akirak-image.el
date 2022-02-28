@@ -18,9 +18,9 @@
          (filename (car (last path)))
          (prefix (if (> (length path) 2)
                      (thread-first path
-                       (seq-take 2)
-                       (string-join "-")
-                       (concat "_"))
+                                   (seq-take 2)
+                                   (string-join "-")
+                                   (concat "_"))
                    ""))
          (basename (file-name-base filename))
          (suffix (substring (sha1 url-string) 0 6))
@@ -43,6 +43,7 @@
             "."
             extension)))
 
+;;;###autoload
 (defun akirak-image-insert-link (url)
   (interactive "sUrl: ")
   (unless (and akirak-image-dir (file-directory-p akirak-image-dir))
@@ -77,7 +78,7 @@
                         (unless (file-exists-p outfile)
                           (let ((default-directory outdir))
                             (call-process-with-args "xh" url "-o"
-                              (file-name-nondirectory outfile))))
+                                                    (file-name-nondirectory outfile))))
                         outfile))))
     (when (string-suffix-p ".webp" outfile)
       (let ((new-file (concat (string-remove-suffix ".webp" outfile)
@@ -89,6 +90,7 @@
     (insert "#+DOWNLOADED: " url " @ " (format-time-string "%F %R:%S") "\n"
             "[[file:" (abbreviate-file-name outfile) "]]\n")))
 
+;;;###autoload
 (defun akirak-image-org-move-downloads ()
   (interactive)
   (unless (derived-mode-p 'org-mode)
