@@ -1,6 +1,7 @@
 ;;; akirak-image.el ---  -*- lexical-binding: t -*-
 
 (require 'pcase)
+(require 'akirak-url)
 
 (defvar url-http-end-of-headers)
 
@@ -46,6 +47,9 @@
 ;;;###autoload
 (defun akirak-image-insert-offline-link (url)
   "Download URL and insert an image link to the local path."
+  (interactive (list (akirak-url-complete "Insert an image link to URL: ")))
+  (unless (derived-mode-p 'org-mode)
+    (user-error "This command must be run in org-mode"))
   (unless (and akirak-image-dir (file-directory-p akirak-image-dir))
     (error "Variable `akirak-image-dir' points to a non-existent directory %s"
            akirak-image-dir))
