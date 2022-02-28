@@ -97,6 +97,7 @@
 
 ;;;; Completing URLs
 
+;;;###autoload
 (defun akirak-url-complete (prompt &optional initial-input history)
   "Complete a url from the clipboard with PROMPT."
   (completing-read prompt
