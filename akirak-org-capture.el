@@ -32,7 +32,6 @@
 (require 'org)
 (require 'ol)
 (require 'akirak-readable)
-(require 'akirak-read)
 
 (defvar org-capture-templates)
 
