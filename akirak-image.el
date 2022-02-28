@@ -5,6 +5,8 @@
 
 (defvar url-http-end-of-headers)
 
+(defconst akirak-image-process-buffer "*Akirak-Image-Process*")
+
 (defcustom akirak-image-dir "~/resources/images/"
   ""
   :type 'directory)
@@ -81,13 +83,14 @@
                           (make-directory outdir))
                         (unless (file-exists-p outfile)
                           (let ((default-directory outdir))
-                            (call-process-with-args "xh" url "-o"
-                                                    (file-name-nondirectory outfile))))
+                            (call-process "xh" nil akirak-image-process-buffer nil
+                                          url "-o" (file-name-nondirectory outfile))))
                         outfile))))
     (when (string-suffix-p ".webp" outfile)
       (let ((new-file (concat (string-remove-suffix ".webp" outfile)
                               ".png")))
-        (call-process-with-args "convert" outfile new-file)
+        (call-process "convert" nil akirak-image-process-buffer nil
+                      outfile new-file)
         (setq outfile new-file)))
     (unless (looking-at (rx bol))
       (insert "\n"))
