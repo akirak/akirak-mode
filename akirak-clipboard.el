@@ -30,7 +30,6 @@
 ;;; Code:
 
 (require 'akirak-url)
-(require 'akirak-insert)
 (require 'cl-lib)
 (require 'subr-x)
 
