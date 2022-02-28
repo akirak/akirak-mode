@@ -70,6 +70,7 @@
         (org-recur-mode 1)
         (when (yes-or-no-p "Add to the file header?")
           (save-excursion
+            (add-file-local-variable-prop-line 'mode 'org)
             (add-file-local-variable-prop-line 'mode 'org-recur)))))
     (unless (akirak-org-recur-next-date)
       (akirak-org-recur-set))
