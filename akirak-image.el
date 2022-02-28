@@ -44,8 +44,8 @@
             extension)))
 
 ;;;###autoload
-(defun akirak-image-insert-link (url)
-  (interactive "sUrl: ")
+(defun akirak-image-insert-offline-link (url)
+  "Download URL and insert an image link to the local path."
   (unless (and akirak-image-dir (file-directory-p akirak-image-dir))
     (error "Variable `akirak-image-dir' points to a non-existent directory %s"
            akirak-image-dir))

@@ -141,7 +141,7 @@
 
 ;;;###autoload
 (defun akirak-url-insert-dwim (url)
-  "Insert URL in a format depending on the major mode."
+  "Insert a link to URL suitable for the major mode."
   (interactive (list (akirak-url-complete "URL to insert: " nil
                                           akirak-url-insert-history)))
   (cond
@@ -153,7 +153,7 @@
 
 ;;;###autoload
 (defun akirak-url-insert-as-markdown (url)
-  "Insert URL in the markdown format."
+  "Insert a link to URL in markdown format, whatever the major mode is."
   (interactive (list (akirak-clipboard-complete-url "URL to insert: ")))
   (insert (format "[%s](%s)"
                   (or (akirak-readable-url-title url)
