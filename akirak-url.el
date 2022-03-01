@@ -154,7 +154,8 @@
 ;;;###autoload
 (defun akirak-url-insert-as-markdown (url)
   "Insert a link to URL in markdown format, whatever the major mode is."
-  (interactive (list (akirak-clipboard-complete-url "URL to insert: ")))
+  (interactive (list (akirak-url-complete "URL to insert: " nil
+                                          akirak-url-insert-history)))
   (insert (format "[%s](%s)"
                   (or (akirak-readable-url-title url)
                       (read-string "Title for the URL: "))
