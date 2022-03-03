@@ -91,7 +91,7 @@
 (defun akirak-org-recur-run-finish-hook ()
   (run-hooks 'akirak-org-recur-finish-hook))
 
-;;;###autoload (autoload 'akirak-org-recur-mode "akirak-org-recur")
+;;;###autoload
 (define-minor-mode akirak-org-recur-mode
   "Turn on the opinionated integration with org-recur."
   :global t
