@@ -149,6 +149,74 @@
         (akirak-git-clone-browse repo)
       (akirak-git-clone--clone origin repo))))
 
+(defcustom akirak-git-clone-self-owners
+  '("akirak" "emacs-twist")
+  ""
+  :type '(repeat string))
+
+(defun akirak-git-clone-flake-node (ref &optional directory)
+  (cl-labels
+      ((git-clone
+         (git-url dest)
+         (if (file-directory-p dest)
+             (akirak-git-clone-browse dest)
+           (akirak-git-clone--clone git-url dest)))
+       (make-dest-path
+         (parent)
+         (cond
+          ((file-name-absolute-p parent)
+           parent)
+          ((stringp parent)
+           (pcase (alist-get 'type ref)
+             ("github" (expand-file-name parent "~/work/github.com/"))
+             ("git" (error "Not implemented"))))
+          (t
+           (error "Not implemented for empty directory")))))
+    (cl-etypecase ref
+      (string (error "Not implemented"))
+      (list (pcase (alist-get 'type ref)
+              ("github"
+               (git-clone (format "https://github.com/%s/%s.git"
+                                  (alist-get 'owner ref)
+                                  (alist-get 'repo ref))
+                          (expand-file-name (alist-get 'repo ref)
+                                            (make-dest-path directory))))
+              ("git"
+               (git-clone (alist-get 'url ref)
+                          (expand-file-name (alist-get 'repo ref)
+                                            (make-dest-path)))))))))
+
+;;;###autoload
+(defun akirak-git-clone-elisp-package ()
+  (interactive)
+  (let* ((node (akirak-git-clone-select-flake-node
+                "~/config/emacs/lock/flake.lock"))
+         (type (alist-get 'type node))
+         (owner (alist-get 'owner node))
+         (directory (cond
+                     ((and (equal type "github")
+                           (equal owner "emacs-twist"))
+                      "emacs-twist")
+                     ((and (equal type "github")
+                           (equal owner "akirak"))
+                      "emacs-lisp")
+                     (t
+                      "~/work/github.com/contributions/"))))
+    (akirak-git-clone-flake-node node directory)))
+
+(defun akirak-git-clone-select-flake-node (lock-file)
+  (with-temp-buffer
+    (insert-file-contents lock-file)
+    (goto-char (point-min))
+    (let* ((result (thread-last
+                     (json-parse-buffer :array-type 'list
+                                        :object-type 'alist)
+                     (alist-get 'nodes)))
+           (nodes (delq (assq 'root result) result))
+           (node-name (completing-read "Clone package source: " nodes))
+           (node (alist-get (intern node-name) nodes)))
+      (alist-get 'original node))))
+
 (defun akirak-git-clone-browse (dir)
   "Browse DIR using `akirak-git-clone-browser-function'."
   (funcall akirak-git-clone-browser-function (file-name-as-directory dir)))
