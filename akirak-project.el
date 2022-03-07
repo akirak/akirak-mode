@@ -78,7 +78,8 @@ display alternative actions."
   "Return a completion table for project ROOTS."
   (lambda (string pred action)
     (if (eq action 'metadata)
-        '(metadata . ((category . project-root)))
+        '(metadata . ((category . project-root)
+                      (annotation-function . akirak-project-root-annotator)))
       (complete-with-action action roots string pred))))
 
 ;;;###autoload
