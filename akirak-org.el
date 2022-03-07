@@ -55,5 +55,21 @@
       (add-hook 'before-save-hook #'akirak-org-sort-buffer nil t)
     (remove-hook 'before-save-hook #'akirak-org-sort-buffer t)))
 
+(defun akirak-org-add-timestamp (&rest args)
+  "Add a timestamp to the current entry.
+
+If the current command is run with a prefix argument, prevent
+from running."
+  (interactive)
+  (unless current-prefix-arg
+    (let ((prop (cl-case this-command
+                  (org-insert-heading "CREATED_TIME")
+                  (akirak-org-add-timestamp (org-read-property-name))
+                  (otherwise "TIMESTAMP"))))
+      (org-set-property prop
+                        (org-timestamp-format
+                         (org-timestamp-from-time (current-time) t t)
+                         (org-time-stamp-format t t))))))
+
 (provide 'akirak-org)
 ;;; akirak-org.el ends here
