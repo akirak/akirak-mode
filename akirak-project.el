@@ -48,7 +48,7 @@
           (message "Dropped project %s" path)
           (setq modified t))
          ((file-name-absolute-p path)
-          (let (abbr (abbreviate-file-name path))
+          (let ((abbr (abbreviate-file-name path)))
             (unless (equal abbr path)
               (setcar cell abbr)
               (setq modified t)))))))
