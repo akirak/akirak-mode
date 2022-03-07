@@ -3,8 +3,18 @@
 (require 'cl-lib)
 (require 'subr-x)
 (require 'project)
+(require 'embark)
 
-(declare-function github-linguist-lookup "github-linguist")
+(declare-function github-linguist-lookup "ext:github-linguist")
+(declare-function github-linguist-update-projects "ext:github-linguist")
+
+;;;###autoload
+(defun akirak-project-rescan ()
+  (interactive)
+  (akirak-project-import-from-magit)
+  (akirak-project-maintain-list)
+  (when (fboundp 'github-linguist-update-projects)
+    (github-linguist-update-projects)))
 
 ;;;###autoload
 (defun akirak-project-import-from-magit ()
