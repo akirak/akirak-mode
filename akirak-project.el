@@ -98,27 +98,28 @@ display alternative actions."
                          (dim ", "))
               (dim ")")))))
 
-(cl-defmacro akirak-project-wrap-command-for-embark (func &key name-suffix)
-  "Define a function with `default-directory' at the project root."
-  (declare (indent 1))
-  (let ((name (concat "akirak-project-" (or name-suffix (symbol-name func)))))
-    `(defun ,(intern name) (dir)
-       ,(documentation func)
-       (interactive (list (or (project-root (project-current))
-                              (vc-root-dir))))
-       (let ((default-directory dir))
-         (call-interactively ',func)))))
+(eval-when-compile
+  (cl-defmacro akirak-project-wrap-command-for-embark (func &key name-suffix require)
+    "Define a function with `default-directory' at the project root."
+    (declare (indent 1))
+    (let ((name (concat "akirak-project-" (or name-suffix (symbol-name func)))))
+      `(defun ,(intern name) (dir)
+         ,(documentation func)
+         (interactive "sProject: ")
+         ,(when require
+            (list 'require require))
+         (let ((default-directory dir))
+           (call-interactively ',func))))))
 
 (akirak-project-wrap-command-for-embark vterm)
-(akirak-project-wrap-command-for-embark dired)
-(akirak-project-wrap-command-for-embark magit-log)
+(akirak-project-wrap-command-for-embark magit-log-head :require 'magit-log)
+(akirak-project-wrap-command-for-embark magit-log-all :require 'magit-log)
 (akirak-project-wrap-command-for-embark consult-project-extra-find
   :name-suffix "find-file")
 
 (defun akirak-project-find-most-recent-file (dir)
   "Visit the most recent file in the project."
-  (interactive (list (or (project-root (project-current))
-                         (vc-root-dir))))
+  (interactive "sProject: ")
   (if-let (file (seq-find (lambda (file)
                             (and (string-prefix-p dir file)
                                  (not (equal file (buffer-file-name)))))
@@ -131,10 +132,11 @@ display alternative actions."
   "Keymap on a project root directory."
   ("r" akirak-project-find-most-recent-file)
   ("f" akirak-project-find-file)
-  ("d" akirak-project-dired)
+  ("d" dired)
   ("t" akirak-project-vterm)
   ("m" magit-status)
-  ("l" akirak-magit-log)
+  ("lh" akirak-project-magit-log-head)
+  ("la" akirak-project-magit-log-all)
   ("n" nix26-flake-show))
 
 (provide 'akirak-project)
