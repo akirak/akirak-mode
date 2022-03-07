@@ -40,9 +40,17 @@
   (project--ensure-read-project-list)
   (let (modified)
     (dolist (cell project--list)
-      (when (file-name-absolute-p (car cell))
-        (setcar cell (abbreviate-file-name (car cell)))
-        (setq modified t)))
+      (let ((path (car cell)))
+        (cond
+         ((not (file-directory-p path))
+          (delq cell project--list)
+          (message "Dropped project %s" path)
+          (setq modified t))
+         ((file-name-absolute-p path)
+          (let (abbr (abbreviate-file-name path))
+            (unless (equal abbr path)
+              (setcar cell abbr)
+              (setq modified t)))))))
     (when modified
       (project--write-project-list))))
 
