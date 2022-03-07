@@ -7,6 +7,7 @@
 
 (declare-function github-linguist-lookup "ext:github-linguist")
 (declare-function github-linguist-update-projects "ext:github-linguist")
+(declare-function nix26-flake-show "ext:nix26")
 
 ;;;###autoload
 (defun akirak-project-rescan ()
@@ -96,6 +97,45 @@ display alternative actions."
                            (mapcar #'car))
                          (dim ", "))
               (dim ")")))))
+
+(cl-defmacro akirak-project-wrap-command-for-embark (func &key name-suffix)
+  "Define a function with `default-directory' at the project root."
+  (declare (indent 1))
+  (let ((name (concat "akirak-project-" (or name-suffix (symbol-name func)))))
+    `(defun ,(intern name) (dir)
+       ,(documentation func)
+       (interactive (list (or (project-root (project-current))
+                              (vc-root-dir))))
+       (let ((default-directory dir))
+         (call-interactively ',func)))))
+
+(akirak-project-wrap-command-for-embark vterm)
+(akirak-project-wrap-command-for-embark dired)
+(akirak-project-wrap-command-for-embark magit-log)
+(akirak-project-wrap-command-for-embark consult-project-extra-find
+  :name-suffix "find-file")
+
+(defun akirak-project-find-most-recent-file (dir)
+  "Visit the most recent file in the project."
+  (interactive (list (or (project-root (project-current))
+                         (vc-root-dir))))
+  (if-let (file (seq-find (lambda (file)
+                            (and (string-prefix-p dir file)
+                                 (not (equal file (buffer-file-name)))))
+                          recentf-list))
+      (find-file file)
+    (let ((default-directory dir))
+      (counsel-project-extra-find))))
+
+(embark-define-keymap akirak-project-root-map
+  "Keymap on a project root directory."
+  ("r" akirak-project-find-most-recent-file)
+  ("f" akirak-project-find-file)
+  ("d" akirak-project-dired)
+  ("t" akirak-project-vterm)
+  ("m" magit-status)
+  ("l" akirak-magit-log)
+  ("n" nix26-flake-show))
 
 (provide 'akirak-project)
 ;;; akirak-project.el ends here
