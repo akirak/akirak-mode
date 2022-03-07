@@ -55,6 +55,7 @@
       (add-hook 'before-save-hook #'akirak-org-sort-buffer nil t)
     (remove-hook 'before-save-hook #'akirak-org-sort-buffer t)))
 
+;;;###autoload
 (defun akirak-org-add-timestamp (&rest args)
   "Add a timestamp to the current entry.
 
