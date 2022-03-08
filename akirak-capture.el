@@ -29,7 +29,6 @@
 
 ;;; Code:
 
-(require 'org-starter)
 (require 'transient)
 (require 'org-capture)
 (require 'ol)
