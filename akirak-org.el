@@ -72,5 +72,84 @@ from running."
                          (org-timestamp-from-time (current-time) t t)
                          (org-time-stamp-format t t))))))
 
+;;;###autoload
+(defun akirak-org-add-empty-checkbox ()
+  "Add an empty check box to the current item."
+  (interactive)
+  (let ((checkbox-regexp (rx "[" (or "X" (optional space)) "] "))
+        (item-regexp (rx bol (* space) "- ")))
+    (cl-labels ((maybe-insert-checkbox
+                  ()
+                  (unless (looking-at checkbox-regexp)
+                    (insert "[ ] "))))
+      (if (region-active-p)
+          (let* ((pos (point))
+                 (beg (region-beginning))
+                 (end (region-end))
+                 (src (buffer-substring-no-properties beg end)))
+            (delete-region beg end)
+            (insert
+             (with-temp-buffer
+               (insert src)
+               (goto-char (point-min))
+               (while (re-search-forward item-regexp (point-max) t)
+                 (maybe-insert-checkbox))
+               (buffer-string)))
+            (goto-char pos))
+        (save-excursion
+          (beginning-of-line)
+          (when (re-search-forward item-regexp (line-end-position) t)
+            (maybe-insert-checkbox)))))))
+
+;;;###autoload
+(defun akirak-org-yank-into-new-block (&optional arg)
+  "Create a new block with the yanked text as its content.
+
+With ARG, pick a text from the kill ring instead of the last one."
+  (interactive "P")
+  (unless (derived-mode-p 'org-mode)
+    (user-error "Not in org-mode"))
+  (beginning-of-line 1)
+  (let ((begin (point))
+        done)
+    (unwind-protect
+        (progn
+          (if arg
+              (yank-pop)
+            (yank))
+          ;; Select the pasted text.
+          (push-mark begin)
+          (setq mark-active t)
+          (call-interactively #'org-insert-structure-template)
+          (setq done t)
+          ;; Unselect the pasted text
+          (deactivate-mark)
+          (let ((case-fold-search t))
+            (save-excursion
+              (goto-char begin)
+              (when (looking-at (rx (* space) "#+begin_src" space))
+                (let ((lang (thread-last
+                              (akirak-complete-major-mode "Source language: ")
+                              (string-remove-suffix "-mode"))))
+                  (end-of-line 1)
+                  (insert lang))))
+            (re-search-forward (rx bol (* space) "#+end_")))
+          ;; If there is whitespace at the beginning of the pasted text,
+          ;; the block will have preceding space as well.
+          ;;
+          ;; Thus you have to re-indent the entire block to ensure
+          ;; that it has no preceding space at the bol.
+          (indent-region begin (point))
+          (forward-line 1)
+          ;; Insert an empty line.
+          (unless (looking-at (rx eol))
+            (insert "\n\n")
+            (beginning-of-line 0)))
+      (unless done
+        ;; If the user has cancelled `org-insert-structure-template',
+        ;; restore the previous state.
+        (deactivate-mark)
+        (delete-region begin (point))))))
+
 (provide 'akirak-org)
 ;;; akirak-org.el ends here
