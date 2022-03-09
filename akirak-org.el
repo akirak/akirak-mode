@@ -151,5 +151,63 @@ With ARG, pick a text from the kill ring instead of the last one."
         (deactivate-mark)
         (delete-region begin (point))))))
 
+;;;###autoload
+(defun akirak-org-angle-open (&optional arg)
+  "Do-what-i-mean \"<\" in `org-mode'."
+  (interactive "P")
+  (if (org-region-active-p)
+      (let ((count (if (numberp arg)
+                       arg
+                     1))
+            (pos (point))
+            (begin (region-beginning))
+            (end (region-end)))
+        (goto-char begin)
+        (insert (make-string count ?<))
+        (goto-char (+ end count))
+        (insert (make-string count ?>))
+        (if (<= pos count)
+            (goto-char pos)
+          (goto-char (+ end (* 2 count)))))
+    (save-match-data
+      (cond
+       ;; Insert a source block.
+       ((and (looking-at (rx ">" eol))
+             (looking-back (rx bol "<" (group (+ (any alnum "-"))))
+                           (line-beginning-position)))
+        (let* ((needle (match-string 1))
+               (mode (or (cl-some (pcase-lambda (`(,pat . ,mode))
+                                    (when (string-match-p pat (concat "." needle))
+                                      mode))
+                                  auto-mode-alist)
+                         (let ((sym (intern (concat needle "-mode"))))
+                           (when (and (commandp sym)
+                                      (not (memq sym minor-mode-list)))
+                             sym))
+                         (akirak-complete-major-mode "Language: " needle))))
+          (delete-region (line-beginning-position)
+                         (line-end-position))
+          (org-insert-structure-template
+           (concat "src " (string-remove-suffix "-mode" (symbol-name mode))))
+          (if arg
+              (progn
+                (org-end-of-line 0)
+                (insert " "))
+            (org-open-line 1))))
+       ;; Insert a block from `org-structure-template-alist'.
+       ((and (looking-at (rx eol))
+             (looking-back (rx bol (any alpha))
+                           (line-beginning-position)))
+        (if-let (type (cdr (assoc (match-string 0) org-structure-template-alist)))
+            (progn
+              (backward-delete-char 1)
+              (org-insert-structure-template type)
+              (org-open-line 1))
+          (insert "<>")
+          (backward-char)))
+       (t
+        (insert "<>")
+        (backward-char))))))
+
 (provide 'akirak-org)
 ;;; akirak-org.el ends here
