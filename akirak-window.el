@@ -53,6 +53,25 @@
                          (cons (car cell)
                                (mapcar #'cdr (cdr cell)))))))
 
+;;;###autoload
+(defun akirak-window-display-buffer-split-below (buf &optional alist)
+  "Split the current window below and display the buffer in the new window.
+
+Based on `display-buffer-split-below-and-attach' in pdf-utils.el."
+  (let ((window (selected-window))
+        (height (cdr (assq 'window-height alist)))
+        newwin)
+    (when height
+      (when (floatp height)
+        (setq height (round (* height (frame-height)))))
+      (setq height (- (max height window-min-height))))
+    (setq newwin (window--display-buffer
+                  buf
+                  (split-window-below height)
+                  'window alist))
+    (set-window-dedicated-p newwin t)
+    newwin))
+
 ;;;; Window manipulation
 
 (defun akirak-window-split--aggressively ()
