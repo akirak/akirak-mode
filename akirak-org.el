@@ -206,8 +206,12 @@ With ARG, pick a text from the kill ring instead of the last one."
           (insert "<>")
           (backward-char)))
        (t
-        (insert "<>")
-        (backward-char))))))
+        (let ((count (if (numberp arg)
+                         arg
+                       1)))
+          (insert (make-string count ?<)
+                  (make-string count ?>))
+          (backward-char count)))))))
 
 (provide 'akirak-org)
 ;;; akirak-org.el ends here
