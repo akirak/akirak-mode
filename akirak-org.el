@@ -217,6 +217,7 @@ With ARG, pick a text from the kill ring instead of the last one."
 (defun akirak-org-clocked-entry-or-agenda (&optional arg)
   "Toggle display of the clocked entry or display an agenda."
   (interactive "P")
+  (require 'org-clock)
   (cond
    (arg
     ;; I don't know what `org-agenda-window-setup' value would be suitable here.
