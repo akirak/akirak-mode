@@ -213,5 +213,23 @@ With ARG, pick a text from the kill ring instead of the last one."
                   (make-string count ?>))
           (backward-char count)))))))
 
+;;;###autoload
+(defun akirak-org-clocked-entry-or-agenda (&optional arg)
+  "Toggle display of the clocked entry or display an agenda."
+  (interactive "P")
+  (cond
+   (arg
+    ;; I don't know what `org-agenda-window-setup' value would be suitable here.
+    ;; 'other-window is my current setting.
+    (org-agenda))
+   ((org-clocking-p)
+    (let ((buffer (org-dog-indirect-buffer org-clock-marker)))
+      (if-let (window (get-buffer-window buffer))
+          (quit-window nil window)
+        (org-switch-to-buffer-other-window buffer))))
+   (t
+    (let ((org-agenda-window-setup 'current-window))
+      (org-agenda nil "n")))))
+
 (provide 'akirak-org)
 ;;; akirak-org.el ends here
