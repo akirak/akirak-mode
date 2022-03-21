@@ -36,7 +36,8 @@
         '("  "
           (:eval (akirak-header-line--project-and-buffer))
           "%n "
-          mode-line-modified))
+          mode-line-modified
+          (mode-line-process ("  " mode-line-process))))
   (setq akirak-header-line--right-format '("(%l,%c) "))
   (add-hook 'after-change-major-mode-hook #'akirak-header-line--setup)
   (dolist (w (window-list))
