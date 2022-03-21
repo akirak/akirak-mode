@@ -22,6 +22,7 @@
 (defvar akirak-header-line--right-format nil)
 (defvar akirak-header-line--orig-format nil)
 
+;;;###autoload
 (define-minor-mode akirak-header-line-mode
   "A minor mode to display buffer information in the header line."
   :global t
