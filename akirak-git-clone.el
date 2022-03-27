@@ -219,7 +219,9 @@
 
 (defun akirak-git-clone-browse (dir)
   "Browse DIR using `akirak-git-clone-browser-function'."
-  (funcall akirak-git-clone-browser-function (file-name-as-directory dir)))
+  (let ((root (file-name-as-directory dir)))
+    (project-remember-project dir)
+    (funcall akirak-git-clone-browser-function root)))
 
 (provide 'akirak-git-clone)
 ;;; akirak-git-clone.el ends here
