@@ -34,6 +34,7 @@
 (require 'cl-lib)
 (require 'f)
 (require 'rx)
+(require 'project)
 
 (defgroup akirak-git-clone
   nil
@@ -220,7 +221,7 @@
 (defun akirak-git-clone-browse (dir)
   "Browse DIR using `akirak-git-clone-browser-function'."
   (let ((root (file-name-as-directory dir)))
-    (project-remember-project dir)
+    (project-remember-project (project-current nil root))
     (funcall akirak-git-clone-browser-function root)))
 
 (provide 'akirak-git-clone)
