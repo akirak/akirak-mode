@@ -1,10 +1,4 @@
 * A collection of elisp functions
-#+BEGIN_HTML
-<a href="https://github.com/akirak/trivial-elisps/actions?query=workflow%3ACI+branch%3Amaster">
-<img src="https://github.com/akirak/trivial-elisps/workflows/CI/badge.svg" alt="CI status">
-</a>
-#+END_HTML
-
 This is a library of Emacs Lisp functions which don't deserve individual packages.
 Most of them have been extracted from my config for reuse across multiple configs.
 They are quality-controlled to allow public use.
