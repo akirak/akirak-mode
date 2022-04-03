@@ -1,24 +1,18 @@
 ;;; akirak-org-beancount.el ---  -*- lexical-binding: t -*-
 
 (require 'org)
+(require 'akirak-beancount)
 
 (defgroup akirak-org-beancount nil
   ""
-  :group 'beancount)
+  :group 'akirak-beancount
+  :group 'akirak-org)
 
 (defcustom akirak-org-beancount-account-property "BEANCOUNT_ACCOUNT"
   ""
   :type 'string)
 
 (defcustom akirak-org-beancount-recipients-property "ITEM_AVAILABLE_AT"
-  ""
-  :type 'string)
-
-(defcustom akirak-org-beancount-journal-file nil
-  ""
-  :type 'file)
-
-(defcustom akirak-org-beancount-currency nil
   ""
   :type 'string)
 
@@ -39,12 +33,6 @@
     (remove-hook 'before-save-hook #'akirak-org-beancount-sort-tables
                  t)))
 
-(defmacro akirak-org-beancount--with-wide-buffer (&rest progn)
-  `(with-current-buffer (or (find-buffer-visiting akirak-org-beancount-journal-file)
-                            (find-file-noselect akirak-org-beancount-journal-file))
-     (org-with-wide-buffer
-      ,@progn)))
-
 ;;;###autoload
 (defun akirak-org-beancount-start-receipt ()
   (interactive)
@@ -52,13 +40,8 @@
         (make-akirak-org-beancount-receipt-context
          :date (org-read-date)
          :recipient (completing-read "Recipient: " (akirak-org-beancount-recipients))
-         :payment (completing-read "Payment: " (akirak-org-beancount--accounts)
-
+         :payment (completing-read "Payment: " (akirak-beancount-account-completions)
                                    nil t "Assets:"))))
-
-(defun akirak-org-beancount--accounts ()
-  (akirak-org-beancount--with-wide-buffer
-   (beancount-collect beancount-account-regexp 0)))
 
 (defun akirak-org-beancount-recipients ()
   (or akirak-org-beancount-recipients
@@ -101,13 +84,13 @@
                           (concat (number-to-string quantity) "x "))
                         (org-get-heading t t t t)
                         recipient)))
-    (akirak-org-beancount--add-transaction :account account
-                                           :date date
-                                           :title title
-                                           :quantity quantity
-                                           :price-num price-num
-                                           :price-currency price-currency
-                                           :payment payment)
+    (akirak-beancount-add-transaction :account account
+                                      :date date
+                                      :title title
+                                      :quantity quantity
+                                      :price-num price-num
+                                      :price-currency price-currency
+                                      :payment payment)
     (org-back-to-heading)
     (if (re-search-forward org-table-line-regexp (org-entry-end-position) t)
         (goto-char (org-table-end))
@@ -117,7 +100,7 @@
                   (org-time-stamp-format nil t)
                   (org-read-date nil t date))
             " | " price-num (or price-currency
-                                (concat " " akirak-org-beancount-currency))
+                                (concat " " akirak-beancount-currency))
             " | " (number-to-string quantity)
             " | " recipient
             " |\n")
@@ -127,46 +110,16 @@
       (org-entry-add-to-multivalued-property
        nil akirak-org-beancount-recipients-property recipient))))
 
-(cl-defun akirak-org-beancount--add-transaction (&key account date title quantity
-                                                      price-num price-currency
-                                                      payment)
-  (akirak-org-beancount--with-wide-buffer
-   (goto-char (point-min))
-   (or (re-search-forward (concat (rx bol (* blank)) (regexp-quote account))
-                          nil t)
-       (akirak-org-beancount-complete-outline))
-   (when (outline-next-heading)
-     (forward-line -1))
-   (insert "\n" date " * " (format "\"%s\"" title)
-           "\n  " account "  "
-           (if (= quantity 1)
-               price-num
-             (number-to-string (* quantity (string-to-number price-num))))
-           (or price-currency
-               (concat " " akirak-org-beancount-currency))
-           "\n  " payment "\n")
-   (beancount-indent-transaction)))
-
 ;;;###autoload
 (defun akirak-org-beancount-assign-account ()
   (interactive)
   (or (org-entry-get nil akirak-org-beancount-account-property t)
       (if-let (account (completing-read "Select an account for the item: "
-                                        (akirak-org-beancount--accounts)))
+                                        (akirak-beancount-account-completions)))
           (progn
             (org-entry-put nil akirak-org-beancount-account-property account)
             account)
         (user-error "You need an account"))))
-
-(defun akirak-org-beancount-complete-outline ()
-  (goto-char (point-min))
-  (let (candidates)
-    (while (outline-next-heading)
-      (push (buffer-substring (point) (line-end-position))
-            candidates))
-    (let ((input (completing-read "Heading: " candidates nil t)))
-      (goto-char (point-min))
-      (search-forward input nil nil))))
 
 (defun akirak-org-beancount--get-latest-price ()
   (let (price
