@@ -148,7 +148,9 @@
   (or (org-entry-get nil akirak-org-beancount-account-property t)
       (if-let (account (completing-read "Select an account for the item: "
                                         (akirak-org-beancount--accounts)))
-          (org-entry-put nil akirak-org-beancount-account-property account)
+          (progn
+            (org-entry-put nil akirak-org-beancount-account-property account)
+            account)
         (user-error "You need an account"))))
 
 (defun akirak-org-beancount-complete-outline ()
