@@ -84,13 +84,13 @@
                           (concat (number-to-string quantity) "x "))
                         (org-get-heading t t t t)
                         recipient)))
-    (akirak-beancount-add-transaction :account account
-                                      :date date
-                                      :title title
-                                      :quantity quantity
-                                      :price-num price-num
-                                      :price-currency price-currency
-                                      :payment payment)
+    (akirak-beancount-add-simple-transaction :account account
+                                             :date date
+                                             :title title
+                                             :quantity quantity
+                                             :price-num price-num
+                                             :price-currency price-currency
+                                             :payment payment)
     (org-back-to-heading)
     (if (re-search-forward org-table-line-regexp (org-entry-end-position) t)
         (goto-char (org-table-end))
