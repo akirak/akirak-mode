@@ -67,8 +67,10 @@
              :test #'equal))))
 
 ;;;###autoload
-(defun akirak-org-beancount-log-expense ()
-  (interactive)
+(defun akirak-org-beancount-log-expense (&optional arg)
+  (interactive "P")
+  (when arg
+    (akirak-org-beancount-start-receipt))
   (let* ((account (akirak-org-beancount-assign-account))
          (payment (akirak-org-beancount-receipt-context-payment
                    akirak-org-beancount-receipt-context))
