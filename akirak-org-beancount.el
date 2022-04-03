@@ -32,7 +32,12 @@
 (defvar akirak-org-beancount-mode-map (make-sparse-keymap))
 
 (define-minor-mode akirak-org-beancount-mode
-  "Minor mode for tracking items in `org-mode'.")
+  "Minor mode for tracking items in `org-mode'."
+  (if akirak-org-beancount-mode
+      (add-hook 'before-save-hook #'akirak-org-beancount-sort-tables
+                nil t)
+    (remove-hook 'before-save-hook #'akirak-org-beancount-sort-tables
+                 t)))
 
 (defmacro akirak-org-beancount--with-wide-buffer (&rest progn)
   `(with-current-buffer (or (find-buffer-visiting akirak-org-beancount-journal-file)
@@ -115,9 +120,7 @@
                                 (concat " " akirak-org-beancount-currency))
             " | " (number-to-string quantity)
             " | " recipient
-            " |")
-    (org-table-align)
-    (insert "\n")
+            " |\n")
     (unless (member recipient
                     (org-entry-get-multivalued-property
                      nil akirak-org-beancount-recipients-property))
@@ -180,6 +183,21 @@
         (setq price (string-trim (org-table-get-field 2)))
         (end-of-line)))
     price))
+
+;;;###autoload
+(defun akirak-org-beancount-sort-tables ()
+  "Sort table rows in the buffer by date."
+  (interactive)
+  (org-with-wide-buffer
+   (goto-char (point-min))
+   (while (re-search-forward org-table-line-regexp nil t)
+     ;; To not corrupt the visibility state, only work on visible tables.
+     (unless (org-invisible-p)
+       (forward-line 2)
+       (org-table-goto-column 1)
+       (org-table-sort-lines nil ?a)
+       (org-table-align)
+       (goto-char (org-table-end))))))
 
 (provide 'akirak-org-beancount)
 ;;; akirak-org-beancount.el ends here
