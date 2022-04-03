@@ -117,6 +117,7 @@
                     (org-entry-get-multivalued-property nil "ITEM_AVAILABLE_AT"))
       (org-entry-add-to-multivalued-property nil "ITEM_AVAILABLE_AT" recipient))))
 
+;;;###autoload
 (defun akirak-org-beancount-assign-account ()
   (interactive)
   (or (org-entry-get nil "BEANCOUNT_ACCOUNT" t)
