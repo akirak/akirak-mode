@@ -2,6 +2,18 @@
 
 (require 'org)
 
+(defgroup akirak-org-beancount nil
+  ""
+  :group 'beancount)
+
+(defcustom akirak-org-beancount-account-property "BEANCOUNT_ACCOUNT"
+  ""
+  :type 'string)
+
+(defcustom akirak-org-beancount-recipients-property "ITEM_AVAILABLE_AT"
+  ""
+  :type 'string)
+
 (defcustom akirak-org-beancount-journal-file nil
   ""
   :type 'file)
@@ -51,7 +63,7 @@
                     (org-map-entries
                      (lambda ()
                        (org-entry-get-multivalued-property
-                        nil "ITEM_AVAILABLE_AT"))))
+                        nil akirak-org-beancount-recipients-property))))
              :test #'equal))))
 
 ;;;###autoload
@@ -82,22 +94,13 @@
                           (concat (number-to-string quantity) "x "))
                         (org-get-heading t t t t)
                         recipient)))
-    (akirak-org-beancount--with-wide-buffer
-     (goto-char (point-min))
-     (or (re-search-forward (concat (rx bol (* blank)) (regexp-quote account))
-                            nil t)
-         (akirak-org-beancount-complete-outline))
-     (when (outline-next-heading)
-       (forward-line -1))
-     (insert "\n" date " * " (format "\"%s\"" title)
-             "\n  " account "  "
-             (if (= quantity 1)
-                 price-num
-               (number-to-string (* quantity (string-to-number price-num))))
-             (or price-currency
-                 (concat " " akirak-org-beancount-currency))
-             "\n  " payment "\n")
-     (beancount-indent-transaction))
+    (akirak-org-beancount--add-transaction :account account
+                                           :date date
+                                           :title title
+                                           :quantity quantity
+                                           :price-num price-num
+                                           :price-currency price-currency
+                                           :payment payment)
     (org-back-to-heading)
     (if (re-search-forward org-table-line-regexp (org-entry-end-position) t)
         (goto-char (org-table-end))
@@ -114,16 +117,38 @@
     (org-table-align)
     (insert "\n")
     (unless (member recipient
-                    (org-entry-get-multivalued-property nil "ITEM_AVAILABLE_AT"))
-      (org-entry-add-to-multivalued-property nil "ITEM_AVAILABLE_AT" recipient))))
+                    (org-entry-get-multivalued-property
+                     nil akirak-org-beancount-recipients-property))
+      (org-entry-add-to-multivalued-property
+       nil akirak-org-beancount-recipients-property recipient))))
+
+(cl-defun akirak-org-beancount--add-transaction (&key account date title quantity
+                                                      price-num price-currency
+                                                      payment)
+  (akirak-org-beancount--with-wide-buffer
+   (goto-char (point-min))
+   (or (re-search-forward (concat (rx bol (* blank)) (regexp-quote account))
+                          nil t)
+       (akirak-org-beancount-complete-outline))
+   (when (outline-next-heading)
+     (forward-line -1))
+   (insert "\n" date " * " (format "\"%s\"" title)
+           "\n  " account "  "
+           (if (= quantity 1)
+               price-num
+             (number-to-string (* quantity (string-to-number price-num))))
+           (or price-currency
+               (concat " " akirak-org-beancount-currency))
+           "\n  " payment "\n")
+   (beancount-indent-transaction)))
 
 ;;;###autoload
 (defun akirak-org-beancount-assign-account ()
   (interactive)
-  (or (org-entry-get nil "BEANCOUNT_ACCOUNT" t)
+  (or (org-entry-get nil akirak-org-beancount-account-property t)
       (if-let (account (completing-read "Select an account for the item: "
                                         (akirak-org-beancount--accounts)))
-          (org-entry-put nil "BEANCOUNT_ACCOUNT" account)
+          (org-entry-put nil akirak-org-beancount-account-property account)
         (user-error "You need an account"))))
 
 (defun akirak-org-beancount-complete-outline ()
