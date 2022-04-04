@@ -18,7 +18,6 @@
   (point-marker))
 
 (defun akirak-org-clock-transfer-entries (dest)
-  (assert (markerp dest))
   (let ((dest-logbook (with-current-buffer (marker-buffer dest)
                         (org-with-wide-buffer
                          (goto-char dest)
