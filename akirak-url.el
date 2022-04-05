@@ -32,6 +32,7 @@
 
 (require 'akirak-readable)
 (declare-function org-link-make-string "ol")
+(declare-function akirak-org-capture-make-entry-body "akirak-org-capture")
 
 (defgroup akirak-url nil
   "Utilities for URLs."
@@ -117,14 +118,14 @@
   ""
   :type 'number)
 
-(defun akirak-url--recent-kills ()
+(defun akirak-url--recent-kills (&optional max)
   (let ((i 0)
         (n 0)
         (len (length kill-ring))
         result)
     (catch 'finish
       (while (and (< i len)
-                  (< n akirak-url-max-recent-items))
+                  (< n (or max akirak-url-max-recent-items)))
         (if-let (k (current-kill i t))
             (when-let (url (akirak-url--match-html-string k))
               (unless (member url result)
@@ -160,6 +161,48 @@
                   (or (akirak-readable-url-title url)
                       (read-string "Title for the URL: "))
                   url)))
+
+(defcustom akirak-url-default-org-capture-file nil
+  ""
+  :type 'file)
+
+;;;###autoload
+(defun akirak-url-org-capture (url)
+  "Capture URL to the default file."
+  (interactive (list (or (akirak-url--match-html-string
+                          (current-kill 0 (not current-prefix-arg)))
+                         (car (akirak-url--recent-kills 1))
+                         (akirak-url-complete "Capture URL: "))))
+  (unless akirak-url-default-org-capture-file
+    (user-error "Variable `akirak-url-default-org-capture-file' is not set"))
+  (let ((orig-contexts org-capture-templates-contexts)
+        (org-capture-templates
+         (doct `(("URL"
+                  :keys ""
+                  :template
+                  (lambda ()
+                    (let ((heading (org-link-make-string
+                                    ,url (akirak-readable-url-title ,url))))
+                      (akirak-org-capture-make-entry-body heading :body t)))
+                  :children
+                  (("Default file"
+                    :keys "c"
+                    :file ,akirak-url-default-org-capture-file
+                    :function org-reverse-datetree-goto-date-in-file)
+                   ("Clock"
+                    :keys "@"
+                    :clock t
+                    :contexts ((:function org-clocking-p)))
+                   ("Datetree file"
+                    :keys "d"
+                    :file (lambda ()
+                            (completing-read "Capture to a datetree: "
+                                             (org-dog-file-completion
+                                              :class 'org-dog-datetree-file)))
+                    :function org-reverse-datetree-goto-date-in-file)))))))
+    (unwind-protect
+        (org-capture)
+      (setq org-capture-templates-contexts orig-contexts))))
 
 (provide 'akirak-url)
 ;;; akirak-url.el ends here
