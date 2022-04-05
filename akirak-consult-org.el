@@ -10,9 +10,6 @@
       (org-clock-goto)
     (consult-org-clock-history)))
 
-;;;###autoload
-(defalias 'akirak-consult-org-clock-goto #'consult-org-clock-goto)
-
 (defun consult-org-clock-history ()
   ;; Based on `consult-org-heading'.
   "Jump to an Org heading.
