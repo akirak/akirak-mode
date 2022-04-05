@@ -2,6 +2,34 @@
 
 (require 'org-clock)
 
+(defun akirak-org-clock--rebuild-history ()
+  (let ((message-log-max nil))
+    (message "Rebuilding the clock history"))
+  (setq org-clock-history
+        (seq-take
+         (thread-last
+           (org-map-entries (lambda ()
+                              (let ((marker (point-marker))
+                                    (time (akirak-org-clock--last-clock-time)))
+                                (when time
+                                  (cons time marker))))
+                            nil
+                            'agenda)
+           (delq nil)
+           (seq-sort-by #'car (lambda (x y) (not (time-less-p x y))))
+           (mapcar #'cdr))
+         org-clock-history-length)))
+
+(defun akirak-org-clock--last-clock-time ()
+  (save-match-data
+    (let ((bound))
+      (when (and (search-forward org-clock-string
+                                 (org-entry-end-position) t)
+                 (re-search-forward (org-re-timestamp 'inactive)
+                                    (line-end-position)
+                                    t))
+        (org-time-string-to-time (match-string 0))))))
+
 (defun akirak-org-clock--find-or-create-logbook ()
   "Go to the end of the log book of the entry."
   (org-back-to-heading)

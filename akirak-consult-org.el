@@ -1,23 +1,28 @@
 ;;; akirak-consult-org.el --- Extensions to consult-org -*- lexical-binding: t -*-
 
 (require 'consult-org)
+(require 'akirak-org-clock)
 
 ;;;###autoload
 (defun consult-org-clock-goto (&optional arg)
   (interactive "P")
-  (if (and (org-clocking-p)
-           (not arg))
-      (org-clock-goto)
-    (consult-org-clock-history)))
+  (pcase arg
+    (`nil (if (org-clocking-p)
+              (org-clock-goto)
+            (consult-org-clock-history)))
+    ('(4) (consult-org-clock-history))
+    ('(16) (consult-org-clock-history t))))
 
-(defun consult-org-clock-history ()
+(defun consult-org-clock-history (&optional rebuild)
   ;; Based on `consult-org-heading'.
   "Jump to an Org heading.
 
   MATCH and SCOPE are as in `org-map-entries' and determine which
   entries are offered.  By default, all entries of the current
   buffer are offered."
-  (interactive)
+  (interactive "P")
+  (when (or rebuild (not org-clock-history))
+    (akirak-org-clock--rebuild-history))
   (consult--read
    (consult--with-increased-gc (consult-org-clock--headings))
    :prompt "Go to heading: "
