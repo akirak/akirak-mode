@@ -176,6 +176,7 @@
   (unless akirak-url-default-org-capture-file
     (user-error "Variable `akirak-url-default-org-capture-file' is not set"))
   (let ((orig-contexts org-capture-templates-contexts)
+        (orig-templates org-capture-templates)
         (org-capture-templates
          (doct `(("URL"
                   :keys ""
@@ -202,7 +203,8 @@
                     :function org-reverse-datetree-goto-date-in-file)))))))
     (unwind-protect
         (org-capture)
-      (setq org-capture-templates-contexts orig-contexts))))
+      (setq org-capture-templates-contexts orig-contexts
+            org-capture-templates orig-templates))))
 
 (provide 'akirak-url)
 ;;; akirak-url.el ends here
