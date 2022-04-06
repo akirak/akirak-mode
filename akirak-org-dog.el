@@ -20,10 +20,10 @@
         (title (or title "%?")))
     (cl-flet
         ((make-payload
-           (state link)
+           (started link)
            (make-akirak-org-dog-capture-payload
             :title title
-            :todo (or state "TODO")
+            :todo (if started "STARTED" "TODO")
             :body (if link
                       (concat "%a\n" body)
                     body))))
