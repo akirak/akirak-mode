@@ -177,36 +177,30 @@
                            (akirak-url-complete "Capture URL: ")))))
   (unless akirak-url-default-org-capture-file
     (user-error "Variable `akirak-url-default-org-capture-file' is not set"))
-  (let ((orig-contexts org-capture-templates-contexts)
-        (orig-templates org-capture-templates)
-        (org-capture-templates
-         (doct `(("URL"
-                  :keys ""
-                  :template
-                  (lambda ()
-                    (let ((heading (org-link-make-string
-                                    ,url (akirak-readable-url-title ,url))))
-                      (akirak-org-capture-make-entry-body heading :body t)))
-                  :children
-                  (("Default file"
-                    :keys "c"
-                    :file ,akirak-url-default-org-capture-file
-                    :function org-reverse-datetree-goto-date-in-file)
-                   ("Clock"
-                    :keys "@"
-                    :clock t
-                    :contexts ((:function org-clocking-p)))
-                   ("Datetree file"
-                    :keys "d"
-                    :file (lambda ()
-                            (completing-read "Capture to a datetree: "
-                                             (org-dog-file-completion
-                                              :class 'org-dog-datetree-file)))
-                    :function org-reverse-datetree-goto-date-in-file)))))))
-    (unwind-protect
-        (org-capture)
-      (setq org-capture-templates-contexts orig-contexts
-            org-capture-templates orig-templates))))
+  (akirak-org-capture-with-doct
+   `(("URL"
+      :keys ""
+      :template
+      (lambda ()
+        (let ((heading (org-link-make-string
+                        ,url (akirak-readable-url-title ,url))))
+          (akirak-org-capture-make-entry-body heading :body t)))
+      :children
+      (("Default file"
+        :keys "c"
+        :file ,akirak-url-default-org-capture-file
+        :function org-reverse-datetree-goto-date-in-file)
+       ("Clock"
+        :keys "@"
+        :clock t
+        :contexts ((:function org-clocking-p)))
+       ("Datetree file"
+        :keys "d"
+        :file (lambda ()
+                (completing-read "Capture to a datetree: "
+                                 (org-dog-file-completion
+                                  :class 'org-dog-datetree-file)))
+        :function org-reverse-datetree-goto-date-in-file))))))
 
 (provide 'akirak-url)
 ;;; akirak-url.el ends here

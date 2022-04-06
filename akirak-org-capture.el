@@ -118,5 +118,16 @@ of the following values:
                      (cons key args)
                      t)))))
 
+;;;###autoload
+(defun akirak-org-capture-with-doct (declarations)
+  "Dispatch `org-capture' with doct DECLARATIONS."
+  (let ((orig-contexts org-capture-templates-contexts)
+        (org-capture-templates (progn
+                                 (setq org-capture-templates-contexts nil)
+                                 (doct declarations))))
+    (unwind-protect
+        (org-capture)
+      (setq org-capture-templates-contexts orig-contexts))))
+
 (provide 'akirak-org-capture)
 ;;; akirak-org-capture.el ends here
