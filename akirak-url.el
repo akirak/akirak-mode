@@ -169,10 +169,12 @@
 ;;;###autoload
 (defun akirak-url-org-capture (url)
   "Capture URL to the default file."
-  (interactive (list (or (akirak-url--match-html-string
-                          (current-kill 0 (not current-prefix-arg)))
-                         (car (akirak-url--recent-kills 1))
-                         (akirak-url-complete "Capture URL: "))))
+  (interactive (list (if (equal current-prefix-arg '(16))
+                         (akirak-url-complete "Capture URL: ")
+                       (or (akirak-url--match-html-string
+                            (current-kill 0 (not current-prefix-arg)))
+                           (car (akirak-url--recent-kills 1))
+                           (akirak-url-complete "Capture URL: ")))))
   (unless akirak-url-default-org-capture-file
     (user-error "Variable `akirak-url-default-org-capture-file' is not set"))
   (let ((orig-contexts org-capture-templates-contexts)
