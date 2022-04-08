@@ -61,8 +61,11 @@
 
 This is an alternative to `project-switch-project' which does not
 display alternative actions."
-  (interactive (list (akirak-prompt-project-root
-                      "Switch to a project: ")))
+  (interactive (list (progn
+                       (when current-prefix-arg
+                         (akirak-project-import-from-magit))
+                       (akirak-prompt-project-root
+                        "Switch to a project: "))))
   (if (file-directory-p (expand-file-name ".git" dir))
       (magit-status dir)
     (dired dir)))
