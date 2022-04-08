@@ -13,6 +13,22 @@
     :todo (akirak-org-dog-capture-payload-todo payload)
     :body (akirak-org-dog-capture-payload-body payload)))
 
+(defun akirak-org-dog--goto-backlog ()
+  (widen)
+  (goto-char (point-min))
+  (cond
+   ((re-search-forward (rx bol "* Backlog"
+                           (or (and (* blank) eol)
+                               (and (+ blank) ":")))
+                       nil t))
+   ((re-search-forward org-heading-regexp nil t)
+    (beginning-of-line 1)
+    (insert "\n* Backlog\n")
+    (forward-line -1))
+   (t
+    (goto-char (point-max))
+    (insert "\n* Backlog"))))
+
 ;;;###autoload
 (defun akirak-org-dog-capture-backlog (&optional title)
   (interactive)
@@ -34,21 +50,7 @@
                                   (org-dog-file-completion
                                    :class 'org-dog-facade-datetree-file)
                                   nil t)
-          :function (lambda ()
-                      (widen)
-                      (goto-char (point-min))
-                      (cond
-                       ((re-search-forward (rx bol "* Backlog"
-                                               (or (and (* blank) eol)
-                                                   (and (+ blank) ":")))
-                                           nil t))
-                       ((re-search-forward org-heading-regexp nil t)
-                        (beginning-of-line 1)
-                        (insert "\n* Backlog\n")
-                        (forward-line -1))
-                       (t
-                        (goto-char (point-max))
-                        (insert "\n* Backlog"))))
+          :function akirak-org-dog--goto-backlog
           :children
           (("Plain entry"
             :keys "b"
