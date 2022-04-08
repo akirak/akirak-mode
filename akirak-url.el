@@ -175,6 +175,7 @@
                             (current-kill 0 (not current-prefix-arg)))
                            (car (akirak-url--recent-kills 1))
                            (akirak-url-complete "Capture URL: ")))))
+  (require 'akirak-org-dog)
   (unless akirak-url-default-org-capture-file
     (user-error "Variable `akirak-url-default-org-capture-file' is not set"))
   (akirak-org-capture-with-doct
@@ -200,7 +201,14 @@
                 (completing-read "Capture to a datetree: "
                                  (org-dog-file-completion
                                   :class 'org-dog-datetree-file)))
-        :function org-reverse-datetree-goto-date-in-file))))))
+        :function org-reverse-datetree-goto-date-in-file)
+       ("Backlog"
+        :keys "b"
+        :file (lambda ()
+                (completing-read "Capture to a backlog: "
+                                 (org-dog-file-completion
+                                  :class 'org-dog-facade-datetree-file)))
+        :function akirak-org-dog--goto-backlog))))))
 
 (provide 'akirak-url)
 ;;; akirak-url.el ends here
