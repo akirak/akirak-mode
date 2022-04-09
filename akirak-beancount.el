@@ -71,7 +71,7 @@
                                                         price-num price-currency
                                                         payment)
   (akirak-beancount--with-wide-buffer
-   (akirak-beancount--search-account)
+   (akirak-beancount--search-account account)
    (insert "\n" date " * " (format "\"%s\"" title)
            "\n  " account "  "
            (if (= quantity 1)

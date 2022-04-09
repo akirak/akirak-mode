@@ -25,8 +25,10 @@
 
 (defvar akirak-org-beancount-mode-map (make-sparse-keymap))
 
+;;;###autoload
 (define-minor-mode akirak-org-beancount-mode
   "Minor mode for tracking items in `org-mode'."
+  :init-value nil
   (if akirak-org-beancount-mode
       (add-hook 'before-save-hook #'akirak-org-beancount-sort-tables
                 nil t)
