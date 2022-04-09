@@ -56,21 +56,26 @@
     (remove-hook 'before-save-hook #'akirak-org-sort-buffer t)))
 
 ;;;###autoload
-(defun akirak-org-add-timestamp (&rest args)
+(defun akirak-org-add-timestamp (&optional property date)
   "Add a timestamp to the current entry.
 
 If the current command is run with a prefix argument, prevent
 from running."
-  (interactive)
+  (interactive (list (when current-prefix-arg
+                       (org-read-property-name))
+                     (when current-prefix-arg
+                       (org-read-date t t))))
+  (org-set-property (or property "CREATED_TIME")
+                    (org-timestamp-format
+                     (org-timestamp-from-time (or date (current-time))
+                                              t t)
+                     (org-time-stamp-format t t))))
+
+;;;###autoload
+(defun akirak-org-ad-around-insert-heading (orig &rest args)
+  (apply orig args)
   (unless current-prefix-arg
-    (let ((prop (cl-case this-command
-                  (org-insert-heading "CREATED_TIME")
-                  (akirak-org-add-timestamp (org-read-property-name))
-                  (otherwise "TIMESTAMP"))))
-      (org-set-property prop
-                        (org-timestamp-format
-                         (org-timestamp-from-time (current-time) t t)
-                         (org-time-stamp-format t t))))))
+    (akirak-org-add-timestamp)))
 
 ;;;###autoload
 (defun akirak-org-add-empty-checkbox ()
