@@ -1,4 +1,7 @@
 * A collection of elisp functions
+*This repository has been migrated to sourcehut.*
+The repository on GitHub is not going to be maintained any more.
+
 This is a library of Emacs Lisp functions which don't deserve individual packages.
 Most of them have been extracted from my config for reuse across multiple configs.
 They are quality-controlled to allow public use.
